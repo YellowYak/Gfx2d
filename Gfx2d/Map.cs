@@ -34,24 +34,24 @@
 
             resources.Clear();
 
-            resources.Add(1, MapResource.Create("Red Wall", ResourceType.Wall, 256, 125, 10, 10));
-            resources.Add(2, MapResource.Create("Blue Wall", ResourceType.Wall, 256, 22, 10, 222));
-            resources.Add(3, MapResource.Create("Green Wall", ResourceType.Wall, 256, 39, 226, 77));
-            resources.Add(4, MapResource.Create("Yellow Wall", ResourceType.Wall, 256, 242, 233, 15));
-            resources.Add(5, MapResource.Create("Purple Wall", ResourceType.Wall, 256, 155, 10, 242));
+            resources.Add(1, MapResource.Create("Red Wall", ResourceType.Wall, 255, 125, 10, 10, 255, 155, 25, 25, 255, 125, 10, 10, 255, 155, 25, 25));
+            resources.Add(2, MapResource.Create("Blue Wall", ResourceType.Wall, 255, 22, 10, 222, 255, 50, 40, 255, 255, 22, 10, 222, 255, 50, 40, 255));
+            resources.Add(3, MapResource.Create("Green Wall", ResourceType.Wall, 255, 39, 226, 77, 255, 60, 255, 100, 255, 39, 226, 77, 255, 60, 255, 100));
+            resources.Add(4, MapResource.Create("Yellow Wall", ResourceType.Wall, 255, 242, 233, 15, 255, 255, 250, 45, 255, 242, 233, 15, 255, 255, 250, 45));
+            resources.Add(5, MapResource.Create("Purple Wall", ResourceType.Wall, 255, 155, 10, 242, 255, 175, 30, 255, 255, 155, 10, 242, 255, 175, 30, 255));
 
-            ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 256, 0, 0, 0);
-            floorResource = MapResource.Create("Floor", ResourceType.Floor, 256, 88, 88, 88);
+            ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 255, 33, 33, 33);
+            floorResource = MapResource.Create("Floor", ResourceType.Floor, 255, 88, 88, 88);
 
             this.tiles = new int[10][];
             this.tiles[0] = new int[] { 5, 2, 3, 1, 1, 1, 1, 1, 4, 5, 1 };
             this.tiles[1] = new int[] { 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
             this.tiles[2] = new int[] { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
-            this.tiles[3] = new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 };
-            this.tiles[4] = new int[] { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 };
-            this.tiles[5] = new int[] { 2, 0, 0, 0, 0, 1, 2, 0, 0, 0, 4 };
-            this.tiles[6] = new int[] { 2, 0, 0, 0, 0, 3, 4, 0, 0, 0, 3 };
-            this.tiles[7] = new int[] { 2, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2 };
+            this.tiles[3] = new int[] { 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 4 };
+            this.tiles[4] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 5 };
+            this.tiles[5] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 4 };
+            this.tiles[6] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 3 };
+            this.tiles[7] = new int[] { 2, 0, 0, 1, 5, 5, 5, 1, 1, 0, 2 };
             this.tiles[8] = new int[] { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
             this.tiles[9] = new int[] { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 

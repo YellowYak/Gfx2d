@@ -1,7 +1,6 @@
 ﻿using Gfx2d;
 using SDL2;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
@@ -153,7 +152,7 @@ void RenderOverheadViewToPixelBuffer()
         for (int y = 0; y < map.Height; y++)
         {
             MapResource? mapResource = map.GetTileResource(x, y);
-            ColorArgb c = mapResource == null ? map.GetFloorResource().Color : mapResource.Color;
+            ColorArgb c = mapResource == null ? map.GetFloorResource().NorthColor : mapResource.NorthColor;
 
             state.FillRectangle(
                 x * pixelsPerTileX,
@@ -234,6 +233,8 @@ void RenderFirstPersonViewToPixelBuffer()
         path.Add($"Angle: {state.CameraAngle}");
         path.Add($"On tile ({raycast_ind_x}, {raycast_ind_y}) with offset ({raycast_offset_x}, {raycast_offset_y})");
 
+        ResourceSide wallSideStruckByRay = ResourceSide.North;
+
         while (currentTileResource == null)
         {
             double remaining_tile_y_length = raycast_offset_y;
@@ -254,11 +255,15 @@ void RenderFirstPersonViewToPixelBuffer()
                     if (rayTraceDirectionX < 0)
                     {
                         raycast_ind_x--;
+                        wallSideStruckByRay = ResourceSide.East;
+                     
                         raycast_offset_x = map.TileWidth;
                     }
                     else
                     {
                         raycast_ind_x++;
+                        wallSideStruckByRay = ResourceSide.West;
+                     
                         raycast_offset_x = 0;
                     }
                 }
@@ -276,12 +281,16 @@ void RenderFirstPersonViewToPixelBuffer()
                     if (triangle_y_length <= remaining_tile_y_length)
                     {
                         raycast_ind_x += rayTraceDirectionX;
+                        wallSideStruckByRay = rayTraceDirectionX < 0 ? ResourceSide.East : ResourceSide.West;
+
                         raycast_offset_x = rayTraceDirectionX > 0 ? 0 : map.TileWidth;
                         raycast_offset_y += triangle_y_length * rayTraceDirectionY;
                     }
                     if (triangle_y_length >= remaining_tile_y_length)
                     {
                         raycast_ind_y += rayTraceDirectionY;
+                        wallSideStruckByRay = rayTraceDirectionY < 0 ? ResourceSide.South : ResourceSide.North;
+
                         raycast_offset_y = rayTraceDirectionY > 0 ? 0 : map.TileWidth;
 
                         // Need to compute a triangle with the opposite leg being remaining_tile_y_length and the adjacent leg the amount to adjust raycast_offset_x
@@ -327,17 +336,17 @@ void RenderFirstPersonViewToPixelBuffer()
         {
             if (bottomOfCeiling == state.ScreenHeight)
                 bottomOfCeiling--;
-            state.FillRectangle(currentColumnX * colsPerIteration, 0, (currentColumnX + 1) * colsPerIteration, bottomOfCeiling, map.GetCeilingResource().Color);
+            state.FillRectangle(currentColumnX * colsPerIteration, 0, (currentColumnX + 1) * colsPerIteration, bottomOfCeiling, map.GetCeilingResource().NorthColor);
         }
 
         int topOfWall = state.ScreenHeight - wallUpperBound;
         int bottomOfWall = state.ScreenHeight - floorUpperBound;
         if (bottomOfWall == state.ScreenHeight)
             bottomOfWall--;
-        state.FillRectangle(currentColumnX * colsPerIteration, topOfWall, (currentColumnX + 1) * colsPerIteration, bottomOfWall, currentTileResource.Color);
+        state.FillRectangle(currentColumnX * colsPerIteration, topOfWall, (currentColumnX + 1) * colsPerIteration, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
 
         if (floorUpperBound > 0)
-            state.FillRectangle(currentColumnX * colsPerIteration, state.ScreenHeight - floorUpperBound, (currentColumnX + 1) * colsPerIteration, state.ScreenHeight - 1, map.GetFloorResource().Color);
+            state.FillRectangle(currentColumnX * colsPerIteration, state.ScreenHeight - floorUpperBound, (currentColumnX + 1) * colsPerIteration, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
 
         currentColumnX++;
     }

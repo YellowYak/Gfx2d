@@ -14,5 +14,7 @@
             G = g;
             B = b;
         }
+
+        public static ColorArgb Black() => new ColorArgb(255, 0, 0, 0);
     }
 }
