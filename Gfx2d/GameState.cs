@@ -16,6 +16,8 @@ namespace Gfx2d
 
     internal class GameState
     {
+        public MathHelpers MathHelpers { get; private set; }
+
         public bool Running { get; set; }
 
         public IntPtr Window { get; private set; }
@@ -52,7 +54,7 @@ namespace Gfx2d
                 double sweepAngle = Math.Round(Math.Atan(this.cameraWidth / 2 / this.CameraDistanceFromPlayer), 5);
 
                 // Determine how many iterations through the array that would be
-                this.cameraSweepAngleIterations = (int)(sweepAngle / MathHelpers.RadiansPerEntry);
+                this.cameraSweepAngleIterations = (int)(sweepAngle / MathHelpers.RotationRadiansDelta);
             }
         }
 
@@ -69,26 +71,14 @@ namespace Gfx2d
             {
                 int userValue = value;
                 if (userValue < 0)
-                    userValue = MathHelpers.PossibleRotationRadians.Length - 1;
+                    userValue = MathHelpers.PossibleRotationRadiansLength - 1;
 
-                if (userValue >= MathHelpers.PossibleRotationRadians.Length)
-                    cameraAngleIndex = userValue % MathHelpers.PossibleRotationRadians.Length;
+                if (userValue >= MathHelpers.PossibleRotationRadiansLength)
+                    cameraAngleIndex = userValue % MathHelpers.PossibleRotationRadiansLength;
                 else
                     cameraAngleIndex = userValue;
-
-                // Determine CameraDirectionX & CameraDirectionY                
-                this.cameraDirectionX = MathHelpers.GetDirectionXFromRotationIndex(cameraAngleIndex);
-                this.cameraDirectionY = MathHelpers.GetDirectionYFromRotationIndex(cameraAngleIndex);
             }
         }
-
-        int cameraDirectionX = 0;
-        public int CameraDirectionX => this.cameraDirectionX;
-
-        int cameraDirectionY = 0;
-        public int CameraDirectionY => this.cameraDirectionY;
-
-        public double CameraAngle => MathHelpers.PossibleRotationRadians[cameraAngleIndex];
 
         private int cameraSweepAngleIterations;
         public int CameraSweepAngleIterations => this.cameraSweepAngleIterations;
@@ -103,8 +93,10 @@ namespace Gfx2d
         public KeyboardState Key_D = KeyboardState.Unpressed;
 
 
-        public GameState(int screenWidth, int screenHeight)
+        public GameState(MathHelpers math, int screenWidth, int screenHeight)
         {
+            this.MathHelpers = math;
+
             this.ScreenWidth = screenWidth;
             this.ScreenHeight = screenHeight;
             this.ScreenHeightHalved = screenHeight / 2;

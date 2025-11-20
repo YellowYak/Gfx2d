@@ -2,10 +2,11 @@
 using SDL2;
 using System.Diagnostics;
 
-const int SCREEN_WIDTH = 800;
+const int SCREEN_WIDTH = 750;
 const int SCREEN_HEIGHT = 600;
 
-var state = new GameState(SCREEN_WIDTH, SCREEN_HEIGHT);
+var MathHelpers = new MathHelpers(0.001);
+var state = new GameState(MathHelpers, SCREEN_WIDTH, SCREEN_HEIGHT);
 var map = new Map();
 
 void ProcessEvents()
@@ -74,29 +75,32 @@ void UpdateGameState()
 
     if (state.Key_Up == KeyboardState.Pressed)
     {
-        newPlayerPos.X += MathHelpers.Cos(state.CameraAngle) * PlayerMovementAcceleration;
-        newPlayerPos.Y += MathHelpers.Sin(state.CameraAngle) * PlayerMovementAcceleration;
+        newPlayerPos.X += MathHelpers.Cos(state.CameraAngleIndex) * PlayerMovementAcceleration;
+        newPlayerPos.Y += MathHelpers.Sin(state.CameraAngleIndex) * PlayerMovementAcceleration;
         playerPosUpdated = true;
     }
 
     if (state.Key_Down == KeyboardState.Pressed)
     {
-        newPlayerPos.X -= MathHelpers.Cos(state.CameraAngle) * PlayerMovementAcceleration;
-        newPlayerPos.Y -= MathHelpers.Sin(state.CameraAngle) * PlayerMovementAcceleration;
+        newPlayerPos.X -= MathHelpers.Cos(state.CameraAngleIndex) * PlayerMovementAcceleration;
+        newPlayerPos.Y -= MathHelpers.Sin(state.CameraAngleIndex) * PlayerMovementAcceleration;
         playerPosUpdated = true;
     }
 
     if (state.Key_A == KeyboardState.Pressed)
     {
-        newPlayerPos.X -= MathHelpers.Cos(state.CameraAngle + MathHelpers.PossibleRotationRadians[MathHelpers.PiOver2Index]) * PlayerMovementAcceleration;
-        newPlayerPos.Y -= MathHelpers.Sin(state.CameraAngle + MathHelpers.PossibleRotationRadians[MathHelpers.PiOver2Index]) * PlayerMovementAcceleration;
+        int prIndex = state.CameraAngleIndex + MathHelpers.PiOverTwoIndex;
+        newPlayerPos.X -= MathHelpers.Cos(prIndex) * PlayerMovementAcceleration;
+        newPlayerPos.Y -= MathHelpers.Sin(prIndex) * PlayerMovementAcceleration;
         playerPosUpdated = true;
+        Debug.Print($"Player pos: {newPlayerPos}, CAI={state.CameraAngleIndex}, prIndex={prIndex}, CAdeg={MathHelpers.GetPossibleRotationRadians(state.CameraAngleIndex) * 180 / Math.PI}, prDeg={MathHelpers.GetPossibleRotationRadians(prIndex) * 180 / Math.PI}");
     }
 
     if (state.Key_D == KeyboardState.Pressed)
     {
-        newPlayerPos.X += MathHelpers.Cos(state.CameraAngle + MathHelpers.PossibleRotationRadians[MathHelpers.PiOver2Index]) * PlayerMovementAcceleration;
-        newPlayerPos.Y += MathHelpers.Sin(state.CameraAngle + MathHelpers.PossibleRotationRadians[MathHelpers.PiOver2Index]) * PlayerMovementAcceleration;
+        int prIndex = state.CameraAngleIndex + MathHelpers.PiOverTwoIndex;
+        newPlayerPos.X += MathHelpers.Cos(prIndex) * PlayerMovementAcceleration;
+        newPlayerPos.Y += MathHelpers.Sin(prIndex) * PlayerMovementAcceleration;
         playerPosUpdated = true;
     }
 
@@ -175,8 +179,8 @@ void RenderOverheadViewToPixelBuffer()
     );
 
     // Draw camera
-    int cameraCenterX = Convert.ToInt32(MathHelpers.Cos(state.CameraAngle) * state.CameraDistanceFromPlayer * pixelsPerTileX) + playerCenterX;
-    int cameraCenterY = Convert.ToInt32(MathHelpers.Sin(state.CameraAngle) * state.CameraDistanceFromPlayer * pixelsPerTileY) + playerCenterY;
+    int cameraCenterX = Convert.ToInt32(MathHelpers.Cos(state.CameraAngleIndex) * state.CameraDistanceFromPlayer * pixelsPerTileX) + playerCenterX;
+    int cameraCenterY = Convert.ToInt32(MathHelpers.Sin(state.CameraAngleIndex) * state.CameraDistanceFromPlayer * pixelsPerTileY) + playerCenterY;
     state.FillRectangle(
         cameraCenterX - 3,
         cameraCenterY - 3,
@@ -192,16 +196,25 @@ void RenderFirstPersonViewToPixelBuffer()
     int endCameraAngleIndex = state.CameraAngleIndex + MathHelpers.Ceiling(state.CameraSweepAngleIterations / 2);
     int colsPerIteration = state.ScreenWidth / state.CameraSweepAngleIterations;
     int currentColumnX = 0;
+    int leftBuffer = 0;
+
+    // If colsPerIteration is 0 we need to adjust
+    int usedScreenWidth = colsPerIteration * state.CameraSweepAngleIterations;
+    if (usedScreenWidth < state.ScreenWidth)
+    {
+        int delta = state.ScreenWidth - usedScreenWidth;
+        leftBuffer = delta / 2;
+
+        state.FillRectangle(0, 0, leftBuffer, state.ScreenHeight - 1, ColorArgb.Black());
+    }
 
     for (int rawCameraAngleIndex = startCameraAngleIndex; rawCameraAngleIndex < endCameraAngleIndex; rawCameraAngleIndex++)
     {
         int cameraAngleIndex = rawCameraAngleIndex;
         if (cameraAngleIndex < 0)
-            cameraAngleIndex = MathHelpers.PossibleRotationRadians.Length + cameraAngleIndex;
-        else if (cameraAngleIndex > MathHelpers.PossibleRotationRadians.Length)
-            cameraAngleIndex = cameraAngleIndex % MathHelpers.PossibleRotationRadians.Length;
-
-        double currentRaycastAngleDegrees = state.CameraAngle;
+            cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength + cameraAngleIndex;
+        else if (cameraAngleIndex > MathHelpers.PossibleRotationRadiansLength)
+            cameraAngleIndex = cameraAngleIndex % MathHelpers.PossibleRotationRadiansLength;
 
         int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / map.TileWidth);
         double player_offset_x = state.PlayerPos.X - map.TileWidth * player_ind_x;
@@ -217,19 +230,17 @@ void RenderFirstPersonViewToPixelBuffer()
         int rayTraceDirectionX = MathHelpers.GetDirectionXFromRotationIndex(cameraAngleIndex);
         int rayTraceDirectionY = MathHelpers.GetDirectionYFromRotationIndex(cameraAngleIndex);
 
-        if (cameraAngleIndex >= MathHelpers.RotationRadiansSwQuadrantStartingIndex && cameraAngleIndex < MathHelpers.RotationRadiansNwQuadrantStartingIndex)        // Lower-left quadrant
-            cameraAngleIndex = MathHelpers.RotationRadiansSwQuadrantStartingIndex - (cameraAngleIndex - MathHelpers.RotationRadiansSwQuadrantStartingIndex);
-        else if (cameraAngleIndex >= MathHelpers.RotationRadiansNwQuadrantStartingIndex && cameraAngleIndex < MathHelpers.RotationRadiansNeQuadrantStartingIndex)  // Upper-left quadrant
+        if (cameraAngleIndex >= MathHelpers.PiOverTwoIndex && cameraAngleIndex < MathHelpers.PiIndex)        // Lower-left quadrant
+            cameraAngleIndex = MathHelpers.PiOverTwoIndex - (cameraAngleIndex - MathHelpers.PiOverTwoIndex);
+        else if (cameraAngleIndex >= MathHelpers.PiIndex && cameraAngleIndex < MathHelpers.ThreePiOverTwoIndex)  // Upper-left quadrant
             cameraAngleIndex = cameraAngleIndex % MathHelpers.PiIndex;
-        else if (cameraAngleIndex >= MathHelpers.RotationRadiansNeQuadrantStartingIndex)   // Upper-right quadrant
-            cameraAngleIndex = MathHelpers.PossibleRotationRadians.Length - cameraAngleIndex;
-
-        double cameraAngle = MathHelpers.PossibleRotationRadians[cameraAngleIndex];
+        else if (cameraAngleIndex >= MathHelpers.ThreePiOverTwoIndex)   // Upper-right quadrant
+            cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
 
         MapResource? currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
 
         List<string> path = new();
-        path.Add($"Angle: {state.CameraAngle}");
+        path.Add($"Angle: {MathHelpers.GetPossibleRotationRadians(cameraAngleIndex)}");
         path.Add($"On tile ({raycast_ind_x}, {raycast_ind_y}) with offset ({raycast_offset_x}, {raycast_offset_y})");
 
         ResourceSide wallSideStruckByRay = ResourceSide.North;
@@ -255,14 +266,14 @@ void RenderFirstPersonViewToPixelBuffer()
                     {
                         raycast_ind_x--;
                         wallSideStruckByRay = ResourceSide.East;
-                     
+
                         raycast_offset_x = map.TileWidth;
                     }
                     else
                     {
                         raycast_ind_x++;
                         wallSideStruckByRay = ResourceSide.West;
-                     
+
                         raycast_offset_x = 0;
                     }
                 }
@@ -273,8 +284,8 @@ void RenderFirstPersonViewToPixelBuffer()
                     else if (rayTraceDirectionX < 0)
                         triangle_x_length = raycast_offset_x == 0 ? map.TileWidth : raycast_offset_x;
 
-                    triangle_hyp_length = triangle_x_length / MathHelpers.Cos(cameraAngle);
-                    triangle_y_length = MathHelpers.Sin(cameraAngle) * triangle_hyp_length;
+                    triangle_hyp_length = triangle_x_length / MathHelpers.Cos(cameraAngleIndex);
+                    triangle_y_length = MathHelpers.Sin(cameraAngleIndex) * triangle_hyp_length;
 
                     // Now determine if we need to move up and/or down on the map
                     if (triangle_y_length <= remaining_tile_y_length)
@@ -294,8 +305,8 @@ void RenderFirstPersonViewToPixelBuffer()
 
                         // Need to compute a triangle with the opposite leg being remaining_tile_y_length and the adjacent leg the amount to adjust raycast_offset_x
                         triangle_y_length = remaining_tile_y_length;
-                        triangle_hyp_length = triangle_y_length / MathHelpers.Sin(cameraAngle);
-                        triangle_x_length = MathHelpers.Cos(cameraAngle) * triangle_hyp_length;
+                        triangle_hyp_length = triangle_y_length / MathHelpers.Sin(cameraAngleIndex);
+                        triangle_x_length = MathHelpers.Cos(cameraAngleIndex) * triangle_hyp_length;
 
                         raycast_offset_x += triangle_x_length * rayTraceDirectionX;
                     }
@@ -349,6 +360,10 @@ void RenderFirstPersonViewToPixelBuffer()
 
         currentColumnX++;
     }
+
+    // Draw the right buffer, if needed
+    if (leftBuffer > 0)
+        state.FillRectangle(currentColumnX, 0, state.ScreenWidth - 1, state.ScreenHeight - 1, ColorArgb.Black());
 }
 
 void PresentPixelBuffer()

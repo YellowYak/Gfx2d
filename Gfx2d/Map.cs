@@ -22,11 +22,11 @@
         {
             // For now, hard-code tile width & height
             this.TileWidth = 1.0;
-            this.WallHeight = 1.2;
+            this.WallHeight = 1.4;
 
             this.InitialCameraPos = new Point2d(8.35, 2.68);
             this.InitialCameraZ = 0.6f;
-            this.CameraAngleIndex = MathHelpers.ThreePiOver2Index;
+            this.CameraAngleIndex = state.MathHelpers.ThreePiOverTwoIndex;
 
             state.PlayerPos = new Point2d(this.InitialCameraPos);
             state.CameraZ = this.InitialCameraZ;
@@ -40,7 +40,7 @@
             resources.Add(4, MapResource.Create("Yellow Wall", ResourceType.Wall, 255, 242, 233, 15, 255, 255, 250, 45, 255, 242, 233, 15, 255, 255, 250, 45));
             resources.Add(5, MapResource.Create("Purple Wall", ResourceType.Wall, 255, 155, 10, 242, 255, 175, 30, 255, 255, 155, 10, 242, 255, 175, 30, 255));
 
-            ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 255, 33, 33, 33);
+            ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 255, 40, 40, 40);
             floorResource = MapResource.Create("Floor", ResourceType.Floor, 255, 88, 88, 88);
 
             this.tiles = new int[10][];
