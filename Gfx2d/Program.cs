@@ -8,7 +8,6 @@ const int SCREEN_HEIGHT = 600;
 var state = new GameState(SCREEN_WIDTH, SCREEN_HEIGHT);
 var map = new Map();
 
-
 void ProcessEvents()
 {
     while (SDL.SDL_PollEvent(out SDL.SDL_Event e) == 1)
@@ -67,8 +66,8 @@ void UpdateGameState()
 {
     const double PlayerMovementAcceleration = 0.025;
 
-    if (state.Key_Right == KeyboardState.Pressed) state.CameraAngleIndex += 1;
-    if (state.Key_Left == KeyboardState.Pressed) state.CameraAngleIndex -= 1;
+    if (state.Key_Right == KeyboardState.Pressed) state.CameraAngleIndex += MathHelpers.RotationIndexDistanceWhenPlayerRotating;
+    if (state.Key_Left == KeyboardState.Pressed) state.CameraAngleIndex -= MathHelpers.RotationIndexDistanceWhenPlayerRotating;
 
     Point2d newPlayerPos = new(state.PlayerPos);
     bool playerPosUpdated = false;
@@ -140,7 +139,7 @@ void RenderOverheadViewToPixelBuffer()
 {
     // Determine number of pixels per tile
     int pixelsPerTileX = Convert.ToInt32(state.ScreenWidth / map.Width);
-    int pixelsPerTileY = Convert.ToInt32(state.ScreenHeight / map.Height); // Convert.ToInt32(pixelsPerTileX * Convert.ToDouble(state.ScreenHeight) / Convert.ToDouble(state.ScreenWidth));
+    int pixelsPerTileY = Convert.ToInt32(state.ScreenHeight / map.Height);
 
     double playerWidthToTileWidthRatio = state.PlayerWidth / map.TileWidth;
     int pixelsPerPlayerXHalved = Convert.ToInt32(pixelsPerTileX * playerWidthToTileWidthRatio) / 2;
@@ -336,17 +335,17 @@ void RenderFirstPersonViewToPixelBuffer()
         {
             if (bottomOfCeiling == state.ScreenHeight)
                 bottomOfCeiling--;
-            state.FillRectangle(currentColumnX * colsPerIteration, 0, (currentColumnX + 1) * colsPerIteration, bottomOfCeiling, map.GetCeilingResource().NorthColor);
+            state.FillRectangle(currentColumnX * colsPerIteration, 0, (currentColumnX + 1) * colsPerIteration - 1, bottomOfCeiling, map.GetCeilingResource().NorthColor);
         }
 
         int topOfWall = state.ScreenHeight - wallUpperBound;
         int bottomOfWall = state.ScreenHeight - floorUpperBound;
         if (bottomOfWall == state.ScreenHeight)
             bottomOfWall--;
-        state.FillRectangle(currentColumnX * colsPerIteration, topOfWall, (currentColumnX + 1) * colsPerIteration, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
+        state.FillRectangle(currentColumnX * colsPerIteration, topOfWall, (currentColumnX + 1) * colsPerIteration - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
 
         if (floorUpperBound > 0)
-            state.FillRectangle(currentColumnX * colsPerIteration, state.ScreenHeight - floorUpperBound, (currentColumnX + 1) * colsPerIteration, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
+            state.FillRectangle(currentColumnX * colsPerIteration, state.ScreenHeight - floorUpperBound, (currentColumnX + 1) * colsPerIteration - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
 
         currentColumnX++;
     }
