@@ -84,6 +84,7 @@ namespace Gfx2d
         public int CameraSweepAngleIterations => this.cameraSweepAngleIterations;
 
         public CameraMode CameraMode { get; set; } = CameraMode.FirstPerson;
+        public bool Fullscreen { get; private set; } = true;
 
         public KeyboardState Key_Right = KeyboardState.Unpressed;
         public KeyboardState Key_Left = KeyboardState.Unpressed;
@@ -128,6 +129,8 @@ namespace Gfx2d
             if (this.Window == IntPtr.Zero)
                 throw new Exception($"There was an issue creating the window. {SDL.SDL_GetError()}");
 
+            if (this.Fullscreen)
+                SetFullscreen();
 
             // Creates a new SDL hardware renderer using the default graphics device with VSYNC enabled.
             this.Renderer = SDL.SDL_CreateRenderer(
@@ -147,6 +150,32 @@ namespace Gfx2d
                 this.ScreenWidth,
                 this.ScreenHeight
             );
+        }
+
+        private void SetFullscreen()
+        {
+            int rslt = SDL.SDL_SetWindowFullscreen(this.Window, (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP);
+            
+            if (rslt < 0)
+                throw new Exception($"There was an issue going to full screen. {SDL.SDL_GetError()}");
+        }
+
+        private void SetWindowedScreen()
+        {
+            int rslt = SDL.SDL_SetWindowFullscreen(this.Window, 0);
+
+            if (rslt < 0)
+                throw new Exception($"There was an issue going to a windowed screen. {SDL.SDL_GetError()}");
+        }
+
+        public void ToggleFullscreen()
+        {
+            if (this.Fullscreen)
+                SetWindowedScreen();
+            else
+                SetFullscreen();
+
+            this.Fullscreen = !this.Fullscreen;
         }
 
         public void ToggleCameraView() => this.CameraMode = this.CameraMode == CameraMode.FirstPerson ? CameraMode.Overhead : CameraMode.FirstPerson;

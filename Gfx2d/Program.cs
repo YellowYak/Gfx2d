@@ -2,8 +2,8 @@
 using SDL2;
 using System.Diagnostics;
 
-const int SCREEN_WIDTH = 750;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 644;
+const int SCREEN_HEIGHT = 480;
 
 var MathHelpers = new MathHelpers(0.001);
 var state = new GameState(MathHelpers, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -44,6 +44,13 @@ void HandleKeyDown(SDL.SDL_Keysym key)
         case SDL.SDL_Keycode.SDLK_a: state.Key_A = KeyboardState.Pressed; break;
         case SDL.SDL_Keycode.SDLK_d: state.Key_D = KeyboardState.Pressed; break;
 
+        case SDL.SDL_Keycode.SDLK_F12: state.ToggleFullscreen(); break;
+
+        case SDL.SDL_Keycode.SDLK_ESCAPE:
+            CleanUp();
+            Environment.Exit(0);
+            break;
+
         case SDL.SDL_Keycode.SDLK_TAB:
             state.ToggleCameraView();
             break;
@@ -65,7 +72,7 @@ void HandleKeyUp(SDL.SDL_Keysym key)
 
 void UpdateGameState()
 {
-    const double PlayerMovementAcceleration = 0.025;
+    const double PlayerMovementAcceleration = 0.035;
 
     if (state.Key_Right == KeyboardState.Pressed) state.CameraAngleIndex += MathHelpers.RotationIndexDistanceWhenPlayerRotating;
     if (state.Key_Left == KeyboardState.Pressed) state.CameraAngleIndex -= MathHelpers.RotationIndexDistanceWhenPlayerRotating;
@@ -206,6 +213,8 @@ void RenderFirstPersonViewToPixelBuffer()
         leftBuffer = delta / 2;
 
         state.FillRectangle(0, 0, leftBuffer, state.ScreenHeight - 1, ColorArgb.Black());
+
+        currentColumnX = leftBuffer;
     }
 
     for (int rawCameraAngleIndex = startCameraAngleIndex; rawCameraAngleIndex < endCameraAngleIndex; rawCameraAngleIndex++)
@@ -238,10 +247,6 @@ void RenderFirstPersonViewToPixelBuffer()
             cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
 
         MapResource? currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
-
-        List<string> path = new();
-        path.Add($"Angle: {MathHelpers.GetPossibleRotationRadians(cameraAngleIndex)}");
-        path.Add($"On tile ({raycast_ind_x}, {raycast_ind_y}) with offset ({raycast_offset_x}, {raycast_offset_y})");
 
         ResourceSide wallSideStruckByRay = ResourceSide.North;
 
@@ -327,13 +332,9 @@ void RenderFirstPersonViewToPixelBuffer()
                 }
             }
 
-            path.Add($"On tile ({raycast_ind_x}, {raycast_ind_y}) with offset ({raycast_offset_x}, {raycast_offset_y})");
-
             // Did we hit a wall?
             currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
         }
-
-        path.Add($"We hit wall {currentTileResource.Name}!");
 
         Point2d raycastHit = new(raycast_ind_x + raycast_offset_x, raycast_ind_y + raycast_offset_y);
         double raycastLength = Point2d.GetLength(state.PlayerPos, raycastHit);
@@ -346,19 +347,19 @@ void RenderFirstPersonViewToPixelBuffer()
         {
             if (bottomOfCeiling == state.ScreenHeight)
                 bottomOfCeiling--;
-            state.FillRectangle(currentColumnX * colsPerIteration, 0, (currentColumnX + 1) * colsPerIteration - 1, bottomOfCeiling, map.GetCeilingResource().NorthColor);
+            state.FillRectangle(currentColumnX, 0, (currentColumnX + colsPerIteration) - 1, bottomOfCeiling, map.GetCeilingResource().NorthColor);
         }
 
         int topOfWall = state.ScreenHeight - wallUpperBound;
         int bottomOfWall = state.ScreenHeight - floorUpperBound;
         if (bottomOfWall == state.ScreenHeight)
             bottomOfWall--;
-        state.FillRectangle(currentColumnX * colsPerIteration, topOfWall, (currentColumnX + 1) * colsPerIteration - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
+        state.FillRectangle(currentColumnX, topOfWall, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
 
         if (floorUpperBound > 0)
-            state.FillRectangle(currentColumnX * colsPerIteration, state.ScreenHeight - floorUpperBound, (currentColumnX + 1) * colsPerIteration - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
+            state.FillRectangle(currentColumnX, state.ScreenHeight - floorUpperBound, (currentColumnX + colsPerIteration) - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
 
-        currentColumnX++;
+        currentColumnX += colsPerIteration;
     }
 
     // Draw the right buffer, if needed
@@ -393,7 +394,6 @@ void CleanUp()
     SDL.SDL_DestroyWindow(state.Window);
     SDL.SDL_Quit();
 }
-
 
 
 
