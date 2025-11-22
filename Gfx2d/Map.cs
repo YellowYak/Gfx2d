@@ -1,5 +1,9 @@
 ﻿namespace Gfx2d
 {
+    /// <summary>
+    /// Defines a map in the game. A map is modeled as a 2d array of "tiles," each of which is a square with identical lengths.
+    /// A tile can be a "wall" or a "floor." Every wall tile has the same defined height.
+    /// </summary>
     internal class Map
     {
         private int[][] tiles = new int[0][];
@@ -8,27 +12,47 @@
         private MapResource? ceilingResource;
         private MapResource? floorResource;
 
+        /// <summary>
+        /// The dimensions of each tile on the map. All tiles on the map are a square.
+        /// </summary>
         public double TileWidth { get; private set; }
+        /// <summary>
+        /// The height of all walls on the map.
+        /// </summary>
         public double WallHeight { get; private set; }
 
+        /// <summary>
+        /// The width of the map in number of tiles.
+        /// </summary>
         public int Width { get; private set; }
+        /// <summary>
+        /// The height of the map in number of tiles.
+        /// </summary>
         public int Height { get; private set; }
 
-        public Point2d InitialCameraPos { get; private set; } = new Point2d(0, 0);
+        /// <summary>
+        /// The player's starting point on the map.
+        /// </summary>
+        public Point2d InitialPlayerPos { get; private set; } = new Point2d(0, 0);
+        /// <summary>
+        /// The starting player POV height on the map.
+        /// </summary>
         public double InitialCameraZ { get; private set; }
+        /// <summary>
+        /// The starting camera angle index on the map.
+        /// </summary>
         public int CameraAngleIndex { get; set; }
 
         public void Load(GameState state)
         {
-            // For now, hard-code tile width & height
             this.TileWidth = 1.0;
             this.WallHeight = 1.4;
 
-            this.InitialCameraPos = new Point2d(8.35, 2.68);
-            this.InitialCameraZ = 0.6f;
-            this.CameraAngleIndex = state.MathHelpers.ThreePiOverTwoIndex;
+            this.InitialPlayerPos = new Point2d(8.35, 2.68);
+            this.InitialCameraZ = GameState.StandingCameraZ;
+            this.CameraAngleIndex = state.MathHelpers.PiIndex;
 
-            state.PlayerPos = new Point2d(this.InitialCameraPos);
+            state.PlayerPos = new Point2d(this.InitialPlayerPos);
             state.CameraZ = this.InitialCameraZ;
             state.CameraAngleIndex = this.CameraAngleIndex;
 
@@ -59,14 +83,33 @@
             this.Height = this.tiles.Length;
         }
 
-        public MapResource? GetTileResource(int x_offset, int y_offset)
+        /// <summary>
+        /// Returns details about a tile resource at a specific (x, y) coordinate on the map.
+        /// If the tile resource is the floor, null is returned.
+        /// Note that the coordinates here are relative to the 2d tile array.
+        /// </summary>
+        /// <param name="x_index">The x tile index. Must be greater than or equal to 0 and strictly less than <see cref="Width"/>.</param>
+        /// <param name="y_index">The y tile index. Must be greater than or equal to 0 and strictly less than <see cref="Height"/>.</param>
+        /// <returns>null if the tile resource is the floor, otherwise the wall's resource.</returns>
+        public MapResource? GetTileResource(int x_index, int y_index)
         {
-            int resourceId = this.tiles[y_offset][x_offset];
+            if (x_index < 0 || x_index >= this.Width) throw new ArgumentOutOfRangeException(nameof(x_index));
+            if (y_index < 0 || y_index >= this.Height) throw new ArgumentOutOfRangeException(nameof(x_index));
+
+            int resourceId = this.tiles[y_index][x_index];
 
             return resourceId == 0 ? null : this.resources[resourceId];
         }
 
+        /// <summary>
+        /// The resource associated with the ceiling.
+        /// </summary>
         public MapResource GetCeilingResource() => ceilingResource!;
+
+        /// <summary>
+        /// The resource associated with the floor.
+        /// </summary>
+        /// <returns></returns>
         public MapResource GetFloorResource() => floorResource!;
     }
 }

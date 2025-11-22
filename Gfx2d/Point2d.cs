@@ -1,5 +1,8 @@
 ﻿namespace Gfx2d
 {
+    /// <summary>
+    /// Represents a point in 2d space.
+    /// </summary>
     internal class Point2d
     {
         public double X { get; set; }
@@ -17,6 +20,9 @@
             Y = clone.Y;
         }
 
+        /// <summary>
+        /// Returns the square bounds around the point from a given width.
+        /// </summary>
         public IEnumerable<Point2d> GetRectBounds(double width)
         {
             double halfWidth = width / 2;
@@ -30,6 +36,9 @@
             };
         }
 
+        /// <summary>
+        /// Uses Pythagorean's theorem to return the length between two <see cref="Point2d"/> objects.
+        /// </summary>
         public static double GetLength(Point2d p1, Point2d p2) => Convert.ToSingle(Math.Sqrt((p2.X -  p1.X) * (p2.X - p1.X) + (p2.Y - p1.Y) * (p2.Y - p1.Y)));
         
         public override string ToString() => $"({this.X}, {this.Y})";

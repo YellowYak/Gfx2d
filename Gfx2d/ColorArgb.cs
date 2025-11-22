@@ -1,5 +1,8 @@
 ﻿namespace Gfx2d
 {
+    /// <summary>
+    /// Represents an color in the SDL_PIXELFORMAT_ARGB8888 format.
+    /// </summary>
     internal class ColorArgb
     {
         public int A { get; private set; }

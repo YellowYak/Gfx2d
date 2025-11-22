@@ -15,10 +15,21 @@
         West
     }
 
+    /// <summary>
+    /// Provides details about a specific type of map resource.
+    /// </summary>
     internal class MapResource
     {
+        /// <summary>
+        /// A human-friendly name for the resource.
+        /// </summary>
         public string Name { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// The resource type.
+        /// </summary>
         public ResourceType ResourceType { get; private set; }
+
         public ColorArgb NorthColor { get; private set; } = ColorArgb.Black();
         public ColorArgb EastColor { get; private set; } = ColorArgb.Black();
         public ColorArgb SouthColor { get; private set; } = ColorArgb.Black();
