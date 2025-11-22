@@ -114,8 +114,11 @@
             return direction_y;
         }
 
-        public int Floor(double a) => (int)a;
+        public static int Floor(double a) => (int)a;
 
-        public int Ceiling(double a) => (int)Math.Ceiling(a);
+        public static int Ceiling(double a) => (int)Math.Ceiling(a);
+
+
+        public static double RadiansToDegrees(double rad) => rad * 180 / Math.PI;
     }
 }

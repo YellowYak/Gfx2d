@@ -48,9 +48,9 @@
             this.TileWidth = 1.0;
             this.WallHeight = 1.4;
 
-            this.InitialPlayerPos = new Point2d(8.35, 2.68);
+            this.InitialPlayerPos = new Point2d(8.5, 2.75);
             this.InitialCameraZ = GameState.StandingCameraZ;
-            this.CameraAngleIndex = state.MathHelpers.PiIndex;
+            this.CameraAngleIndex = state.MathHelpers.ThreePiOverTwoIndex;
 
             state.PlayerPos = new Point2d(this.InitialPlayerPos);
             state.CameraZ = this.InitialCameraZ;

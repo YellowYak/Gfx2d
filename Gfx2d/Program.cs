@@ -218,8 +218,25 @@ void RenderOverheadViewToPixelBuffer()
     );
 }
 
+
+
+
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
+
 void RenderFirstPersonViewToPixelBuffer()
 {
+    List<RaycastResult> raycastLengths = new(state.CameraSweepAngleIterations);
+
     int sweepAngleIterations = state.CameraSweepAngleIterations;
 
     // We may need to adjust how many angles we iterate through when performing the ray tracing across the camera.
@@ -277,14 +294,12 @@ void RenderFirstPersonViewToPixelBuffer()
             continue;
         }
 
-        
         // Determine the X and Y map indices for the player, as well as the offset within the tile.
         int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / map.TileWidth);
         double player_offset_x = state.PlayerPos.X - map.TileWidth * player_ind_x;
 
         int player_ind_y = (int)MathHelpers.Floor(state.PlayerPos.Y / map.TileWidth);
         double player_offset_y = state.PlayerPos.Y - map.TileWidth * player_ind_y;
-
 
         // Next, make sure that the camera angle index we are working with on this iteration is kosher. It must be greater than or equal to 0 and strictly less than PossibleRotationRadiansLength
         // If this isn't the case, adjust accordingly.
@@ -294,16 +309,7 @@ void RenderFirstPersonViewToPixelBuffer()
         else if (cameraAngleIndex > MathHelpers.PossibleRotationRadiansLength)
             cameraAngleIndex = cameraAngleIndex % MathHelpers.PossibleRotationRadiansLength;
 
-        // Next, for mathy reasons we want to have the angle as a value between 0..PI/2 where the X axis is the adjacent leg to the angle.
-        // If the angle is already between 0..PI/2 then we are done! But otherwise we need to change the angle accordingly.
-        if (cameraAngleIndex >= MathHelpers.PiOverTwoIndex && cameraAngleIndex < MathHelpers.PiIndex)        // Lower-left quadrant
-            cameraAngleIndex = MathHelpers.PiOverTwoIndex - (cameraAngleIndex - MathHelpers.PiOverTwoIndex);
-        else if (cameraAngleIndex >= MathHelpers.PiIndex && cameraAngleIndex < MathHelpers.ThreePiOverTwoIndex)  // Upper-left quadrant
-            cameraAngleIndex = cameraAngleIndex % MathHelpers.PiIndex;
-        else if (cameraAngleIndex >= MathHelpers.ThreePiOverTwoIndex)   // Upper-right quadrant
-            cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
-
-
+        
         // Next, determine the ray's current X and Y map indices, as well as its offset within the tile.
         int raycast_ind_x = player_ind_x;
         double raycast_offset_x = player_offset_x;
@@ -313,6 +319,15 @@ void RenderFirstPersonViewToPixelBuffer()
         // We also want to know the X and Y direction of the ray, as this will be used to determine if we're moving up or down and right or left as we move from one tile to the next.
         int rayTraceDirectionX = MathHelpers.GetDirectionXFromRotationIndex(cameraAngleIndex);
         int rayTraceDirectionY = MathHelpers.GetDirectionYFromRotationIndex(cameraAngleIndex);
+
+        // Next, for mathy reasons we want to have the angle as a value between 0..PI/2 where the X axis is the adjacent leg to the angle.
+        // If the angle is already between 0..PI/2 then we are done! But otherwise we need to change the angle accordingly.
+        if (cameraAngleIndex >= MathHelpers.PiOverTwoIndex && cameraAngleIndex < MathHelpers.PiIndex)        // Lower-left quadrant
+            cameraAngleIndex = MathHelpers.PiOverTwoIndex - (cameraAngleIndex - MathHelpers.PiOverTwoIndex);
+        else if (cameraAngleIndex >= MathHelpers.PiIndex && cameraAngleIndex < MathHelpers.ThreePiOverTwoIndex)  // Upper-left quadrant
+            cameraAngleIndex = cameraAngleIndex % MathHelpers.PiIndex;
+        else if (cameraAngleIndex >= MathHelpers.ThreePiOverTwoIndex)   // Upper-right quadrant
+            cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
 
         // Get the resource at the current tile. If this is null then the current tile is a floor, otherwise it's a wall.
         MapResource? currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
@@ -333,7 +348,6 @@ void RenderFirstPersonViewToPixelBuffer()
                 remaining_tile_y_length = map.TileWidth;
             if (rayTraceDirectionY > 0)
                 remaining_tile_y_length = map.TileWidth - raycast_offset_y;
-
 
             if (rayTraceDirectionX != 0)
             {
@@ -479,14 +493,25 @@ void RenderFirstPersonViewToPixelBuffer()
             state.FillRectangle(currentColumnX, 0, (currentColumnX + colsPerIteration) - 1, bottomOfCeiling, map.GetCeilingResource().NorthColor);
         }
 
-        int topOfWall = state.ScreenHeight - wallUpperBound;
         int bottomOfWall = state.ScreenHeight - floorUpperBound;
         if (bottomOfWall == state.ScreenHeight)
             bottomOfWall--;
-        state.FillRectangle(currentColumnX, topOfWall, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
+        state.FillRectangle(currentColumnX, bottomOfCeiling, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
 
         if (floorUpperBound > 0)
             state.FillRectangle(currentColumnX, state.ScreenHeight - floorUpperBound, (currentColumnX + colsPerIteration) - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
+
+        // Record details about the raycast just performed.
+        raycastLengths.Add(
+            new RaycastResult
+            {
+                ColumnX = currentColumnX,
+                RaycastLength = raycastLength,
+                FloorHeight = floorUpperBound,
+                WallHeight = bottomOfWall - bottomOfCeiling,
+                CeilingHeight = bottomOfCeiling
+            }
+        );
 
         currentColumnX += colsPerIteration;
     }
