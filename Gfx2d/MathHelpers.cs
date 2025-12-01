@@ -69,6 +69,28 @@
         }
 
         /// <summary>
+        /// Returns the index in the possible rotation radians array that is closest to the passed-in value.
+        /// </summary>
+        public int GetClosestRotationIndex(double rads)
+        {
+            if (this.possibleRotationRadians == null || this.possibleRotationRadians.Length == 0) throw new Exception("Invalid possibleRotationRadians array");
+            if (rads < 0) throw new ArgumentOutOfRangeException(nameof(rads));
+
+            double delta = Math.Abs(rads - this.possibleRotationRadians[0]);
+
+            for (int i = 1; i < this.possibleRotationRadians.Length; i++)
+            {
+                double diff = Math.Abs(rads - this.possibleRotationRadians[i]);
+                if (diff > delta)
+                    return i - 1;
+                else
+                    delta = diff;
+            }
+
+            return this.possibleRotationRadians.Length - 1;
+        }
+
+        /// <summary>
         /// Returns the radians at the specified index. A little modulo math is in place to account for index values that may be outside the bounds of the array.
         /// </summary>
         public double GetPossibleRotationRadians(int index) => this.possibleRotationRadians![index % possibleRotationRadiansLength];

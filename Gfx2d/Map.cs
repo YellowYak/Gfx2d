@@ -1,4 +1,6 @@
-﻿namespace Gfx2d
+﻿using Gfx2d.Resources;
+
+namespace Gfx2d
 {
     /// <summary>
     /// Defines a map in the game. A map is modeled as a 2d array of "tiles," each of which is a square with identical lengths.
@@ -15,11 +17,13 @@
         /// <summary>
         /// The dimensions of each tile on the map. All tiles on the map are a square.
         /// </summary>
-        public double TileWidth { get; private set; }
+        public double TileWidth => this.LevelData.Dimensions!.TileWidth;
         /// <summary>
         /// The height of all walls on the map.
         /// </summary>
-        public double WallHeight { get; private set; }
+        public double WallHeight => this.LevelData.Dimensions!.WallHeight;
+
+        private LevelData LevelData { get; set; } = new();
 
         /// <summary>
         /// The width of the map in number of tiles.
@@ -30,33 +34,24 @@
         /// </summary>
         public int Height { get; private set; }
 
-        /// <summary>
-        /// The player's starting point on the map.
-        /// </summary>
-        public Point2d InitialPlayerPos { get; private set; } = new Point2d(0, 0);
-        /// <summary>
-        /// The starting player POV height on the map.
-        /// </summary>
-        public double InitialCameraZ { get; private set; }
-        /// <summary>
-        /// The starting camera angle index on the map.
-        /// </summary>
-        public int CameraAngleIndex { get; set; }
-
-        public void Load(GameState state)
+        public void Load(LevelData level, GameState state)
         {
-            this.TileWidth = 1.0;
-            this.WallHeight = 1.4;
+            this.LevelData = level;
 
-            this.InitialPlayerPos = new Point2d(8.5, 2.75);
-            this.InitialCameraZ = GameState.StandingCameraZ;
-            this.CameraAngleIndex = state.MathHelpers.ThreePiOverTwoIndex;
-
-            state.PlayerPos = new Point2d(this.InitialPlayerPos);
-            state.CameraZ = this.InitialCameraZ;
-            state.CameraAngleIndex = this.CameraAngleIndex;
+            state.PlayerPos = new Point2d(this.LevelData.StartingPosition.PlayerPos);
+            state.CameraAngleIndex = state.MathHelpers.GetClosestRotationIndex(this.LevelData.StartingPosition.CameraAngleRads);
 
             resources.Clear();
+
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
+            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
 
             resources.Add(1, MapResource.Create("Red Wall", ResourceType.Wall, 255, 125, 10, 10, 255, 155, 25, 25, 255, 125, 10, 10, 255, 155, 25, 25));
             resources.Add(2, MapResource.Create("Blue Wall", ResourceType.Wall, 255, 22, 10, 222, 255, 50, 40, 255, 255, 22, 10, 222, 255, 50, 40, 255));
@@ -67,17 +62,7 @@
             ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 255, 40, 40, 40);
             floorResource = MapResource.Create("Floor", ResourceType.Floor, 255, 88, 88, 88);
 
-            this.tiles = new int[10][];
-            this.tiles[0] = new int[] { 5, 2, 3, 1, 1, 1, 1, 1, 4, 5, 1 };
-            this.tiles[1] = new int[] { 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
-            this.tiles[2] = new int[] { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
-            this.tiles[3] = new int[] { 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 4 };
-            this.tiles[4] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 5 };
-            this.tiles[5] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 4 };
-            this.tiles[6] = new int[] { 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 3 };
-            this.tiles[7] = new int[] { 2, 0, 0, 1, 5, 5, 5, 1, 1, 0, 2 };
-            this.tiles[8] = new int[] { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-            this.tiles[9] = new int[] { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+            this.tiles = this.LevelData.MapTiles;
 
             this.Width = this.tiles.Max(tr => tr.Length);
             this.Height = this.tiles.Length;

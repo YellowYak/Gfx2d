@@ -1,4 +1,5 @@
 ﻿using Gfx2d;
+using Gfx2d.Resources;
 using SDL2;
 using System.Diagnostics;
 
@@ -552,7 +553,7 @@ void CleanUp()
 
 
 state.Initialize();
-map.Load(state);
+map.Load(LevelData.LoadFromFile(@"C:\Users\scott\OneDrive\My Projects\Programming Projects\Gfx2d\Resources\Level1.json"), state);
 
 // Main game loop - keep on chugging until the game is no longer running!
 while (state.Running)
