@@ -8,20 +8,14 @@ namespace Gfx2d
     /// </summary>
     internal class Map
     {
-        private int[][] tiles = new int[0][];
-
-        private Dictionary<int, MapResource> resources = new();
-        private MapResource? ceilingResource;
-        private MapResource? floorResource;
-
         /// <summary>
         /// The dimensions of each tile on the map. All tiles on the map are a square.
         /// </summary>
-        public double TileWidth => this.LevelData.Dimensions!.TileWidth;
+        public double TileWidth => this.LevelData.Dimensions.TileWidth;
         /// <summary>
         /// The height of all walls on the map.
         /// </summary>
-        public double WallHeight => this.LevelData.Dimensions!.WallHeight;
+        public double WallHeight => this.LevelData.Dimensions.WallHeight;
 
         private LevelData LevelData { get; set; } = new();
 
@@ -41,31 +35,8 @@ namespace Gfx2d
             state.PlayerPos = new Point2d(this.LevelData.StartingPosition.PlayerPos);
             state.CameraAngleIndex = state.MathHelpers.GetClosestRotationIndex(this.LevelData.StartingPosition.CameraAngleRads);
 
-            resources.Clear();
-
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-            // TODO: Have map resources read from JSON file. But where to define the resources? Separate files? Separate single file? In JSON directly?
-
-            resources.Add(1, MapResource.Create("Red Wall", ResourceType.Wall, 255, 125, 10, 10, 255, 155, 25, 25, 255, 125, 10, 10, 255, 155, 25, 25));
-            resources.Add(2, MapResource.Create("Blue Wall", ResourceType.Wall, 255, 22, 10, 222, 255, 50, 40, 255, 255, 22, 10, 222, 255, 50, 40, 255));
-            resources.Add(3, MapResource.Create("Green Wall", ResourceType.Wall, 255, 39, 226, 77, 255, 60, 255, 100, 255, 39, 226, 77, 255, 60, 255, 100));
-            resources.Add(4, MapResource.Create("Yellow Wall", ResourceType.Wall, 255, 242, 233, 15, 255, 255, 250, 45, 255, 242, 233, 15, 255, 255, 250, 45));
-            resources.Add(5, MapResource.Create("Purple Wall", ResourceType.Wall, 255, 155, 10, 242, 255, 175, 30, 255, 255, 155, 10, 242, 255, 175, 30, 255));
-
-            ceilingResource = MapResource.Create("Ceiling", ResourceType.Ceiling, 255, 40, 40, 40);
-            floorResource = MapResource.Create("Floor", ResourceType.Floor, 255, 88, 88, 88);
-
-            this.tiles = this.LevelData.MapTiles;
-
-            this.Width = this.tiles.Max(tr => tr.Length);
-            this.Height = this.tiles.Length;
+            this.Width = this.LevelData.MapTiles.Max(tr => tr.Length);
+            this.Height = this.LevelData.MapTiles.Length;
         }
 
         /// <summary>
@@ -81,20 +52,20 @@ namespace Gfx2d
             if (x_index < 0 || x_index >= this.Width) throw new ArgumentOutOfRangeException(nameof(x_index));
             if (y_index < 0 || y_index >= this.Height) throw new ArgumentOutOfRangeException(nameof(x_index));
 
-            int resourceId = this.tiles[y_index][x_index];
+            int resourceId = this.LevelData.MapTiles[y_index][x_index];
 
-            return resourceId == 0 ? null : this.resources[resourceId];
+            return resourceId == 0 ? null : this.LevelData.GetTileResources()[resourceId];
         }
 
         /// <summary>
         /// The resource associated with the ceiling.
         /// </summary>
-        public MapResource GetCeilingResource() => ceilingResource!;
+        public MapResource GetCeilingResource() => this.LevelData.CeilingResource;
 
         /// <summary>
         /// The resource associated with the floor.
         /// </summary>
         /// <returns></returns>
-        public MapResource GetFloorResource() => floorResource!;
+        public MapResource GetFloorResource() => this.LevelData.FloorResource;
     }
 }

@@ -1,12 +1,5 @@
 ﻿namespace Gfx2d
 {
-    public enum ResourceType
-    {
-        Ceiling,
-        Floor,
-        Wall
-    }
-
     public enum ResourceSide
     {
         North,
@@ -25,11 +18,6 @@
         /// </summary>
         public string Name { get; private set; } = string.Empty;
 
-        /// <summary>
-        /// The resource type.
-        /// </summary>
-        public ResourceType ResourceType { get; private set; }
-
         public ColorArgb NorthColor { get; private set; } = ColorArgb.Black();
         public ColorArgb EastColor { get; private set; } = ColorArgb.Black();
         public ColorArgb SouthColor { get; private set; } = ColorArgb.Black();
@@ -47,58 +35,37 @@
 
         public static MapResource Create(
             string name,
-            ResourceType type,
-            int a,
-            int r,
-            int g,
-            int b
+            int[] argb
         )
         {
             MapResource resource = new();
 
             resource.Name = name;
 
-            resource.ResourceType = type;
-
-            resource.NorthColor = new ColorArgb(a, r, g, b);
-            resource.EastColor = new ColorArgb(a, r, g, b);
-            resource.SouthColor = new ColorArgb(a, r, g, b);
-            resource.WestColor = new ColorArgb(a, r, g, b);
+            resource.NorthColor = new ColorArgb(argb[0], argb[1], argb[2], argb[3]);
+            resource.EastColor = new ColorArgb(argb[0], argb[1], argb[2], argb[3]);
+            resource.SouthColor = new ColorArgb(argb[0], argb[1], argb[2], argb[3]);
+            resource.WestColor = new ColorArgb(argb[0], argb[1], argb[2], argb[3]);
 
             return resource;
         }
 
         public static MapResource Create(
             string name,
-            ResourceType type,
-            int northA,
-            int northR,
-            int northG,
-            int northB,
-            int eastA,
-            int eastR,
-            int eastG,
-            int eastB,
-            int southA,
-            int southR,
-            int southG,
-            int southB,
-            int westA,
-            int westR,
-            int westG,
-            int westB
+            int[] northArgb,
+            int[] eastArgb,
+            int[] southArgb,
+            int[] westArgb
         )
         {
             MapResource resource = new();
 
             resource.Name = name;
 
-            resource.ResourceType = type;
-
-            resource.NorthColor = new ColorArgb(northA, northR, northG, northB);
-            resource.EastColor = new ColorArgb(eastA, eastR, eastG, eastB);
-            resource.SouthColor = new ColorArgb(southA, southR, southG, southB);
-            resource.WestColor = new ColorArgb(westA, westR, westG, westB);
+            resource.NorthColor = new ColorArgb(northArgb[0], northArgb[1], northArgb[2], northArgb[3]);
+            resource.EastColor = new ColorArgb(eastArgb[0], eastArgb[1], eastArgb[2], eastArgb[3]);
+            resource.SouthColor = new ColorArgb(southArgb[0], southArgb[1], southArgb[2], southArgb[3]);
+            resource.WestColor = new ColorArgb(westArgb[0], westArgb[1], westArgb[2], westArgb[3]);
 
             return resource;
         }

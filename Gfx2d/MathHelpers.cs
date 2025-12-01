@@ -2,9 +2,9 @@
 {
     internal class MathHelpers
     {
-        private double[]? possibleRotationRadians;
-        private double[]? cosTable;
-        private double[]? sinTable;
+        private double[] possibleRotationRadians;
+        private double[] cosTable;
+        private double[] sinTable;
 
         private int possibleRotationRadiansLength;
         public int PossibleRotationRadiansLength => this.possibleRotationRadiansLength;
@@ -93,17 +93,17 @@
         /// <summary>
         /// Returns the radians at the specified index. A little modulo math is in place to account for index values that may be outside the bounds of the array.
         /// </summary>
-        public double GetPossibleRotationRadians(int index) => this.possibleRotationRadians![index % possibleRotationRadiansLength];
+        public double GetPossibleRotationRadians(int index) => this.possibleRotationRadians[index % possibleRotationRadiansLength];
 
         /// <summary>
         /// Returns the cos value for a radian at the specified index. A little modulo math is in place to account for index values that may be outside the bounds of the array.
         /// </summary>
-        public double Cos(int rotationRadianIndex) => this.cosTable![rotationRadianIndex % possibleRotationRadiansLength];
+        public double Cos(int rotationRadianIndex) => this.cosTable[rotationRadianIndex % possibleRotationRadiansLength];
 
         /// <summary>
         /// Returns the sin value for a radian at the specified index. A little modulo math is in place to account for index values that may be outside the bounds of the array.
         /// </summary>
-        public double Sin(int rotationRadianIndex) => this.sinTable![rotationRadianIndex % possibleRotationRadiansLength];
+        public double Sin(int rotationRadianIndex) => this.sinTable[rotationRadianIndex % possibleRotationRadiansLength];
 
 
         /// <summary>
