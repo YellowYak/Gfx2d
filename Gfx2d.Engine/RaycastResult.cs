@@ -1,4 +1,6 @@
-﻿namespace Gfx2d
+﻿using Gfx2d.Resources;
+
+namespace Gfx2d.Engine
 {
     internal class RaycastResult
     {

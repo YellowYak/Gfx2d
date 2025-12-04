@@ -1,6 +1,6 @@
 ﻿using Gfx2d.Resources;
 
-namespace Gfx2d
+namespace Gfx2d.Engine
 {
     /// <summary>
     /// Defines a map in the game. A map is modeled as a 2d array of "tiles," each of which is a square with identical lengths.

@@ -1,6 +1,7 @@
 ﻿using SDL2;
+using Gfx2d.Resources;
 
-namespace Gfx2d
+namespace Gfx2d.Engine
 {
     internal enum CameraMode
     {

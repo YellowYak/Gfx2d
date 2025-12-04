@@ -2,7 +2,7 @@
 
 namespace Gfx2d.Resources
 {
-    internal class LevelStartingPosition
+    public class LevelStartingPosition
     {
         /// <summary>
         /// The player's starting point on the map.

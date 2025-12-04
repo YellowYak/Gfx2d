@@ -2,7 +2,7 @@
 
 namespace Gfx2d.Resources
 {
-    internal class ResourceReference
+    public class ResourceReference
     {
         [JsonProperty(Required = Required.Always)]
         public int Id { get; set; }

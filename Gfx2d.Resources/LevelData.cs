@@ -2,7 +2,7 @@
 
 namespace Gfx2d.Resources
 {
-    internal class LevelData
+    public class LevelData
     {
         /// <summary>
         /// Loads a level and its associated resources from a JSON file.

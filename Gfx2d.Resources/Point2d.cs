@@ -1,9 +1,9 @@
-﻿namespace Gfx2d
+﻿namespace Gfx2d.Resources
 {
     /// <summary>
     /// Represents a point in 2d space.
     /// </summary>
-    internal class Point2d
+    public class Point2d
     {
         public double X { get; set; }
         public double Y { get; set; }

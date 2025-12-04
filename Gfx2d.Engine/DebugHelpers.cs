@@ -1,4 +1,4 @@
-﻿namespace Gfx2d
+﻿namespace Gfx2d.Engine
 {
     internal static class DebugHelpers
     {

@@ -1,4 +1,4 @@
-﻿namespace Gfx2d
+﻿namespace Gfx2d.Resources
 {
     public enum ResourceSide
     {
@@ -11,7 +11,7 @@
     /// <summary>
     /// Provides details about a specific type of map resource.
     /// </summary>
-    internal class MapResource
+    public class MapResource
     {
         /// <summary>
         /// A human-friendly name for the resource.

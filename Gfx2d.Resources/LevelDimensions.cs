@@ -2,7 +2,7 @@
 
 namespace Gfx2d.Resources
 {
-    internal class LevelDimensions
+    public class LevelDimensions
     {
         /// <summary>
         /// The dimensions of each tile on the map. All tiles on the map are a square.
