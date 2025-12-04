@@ -7,6 +7,8 @@
         public double RaycastLength { get; set; }
         public double PerpendicularLength { get; set; }
 
+        public double Shading { get; set; }
+
         public Point2d? PlayerPos { get; set; }
         public Point2d? RaycastPoint { get; set; }
 
@@ -25,7 +27,7 @@
             if (RaycastPoint != null)
                 toDesc = RaycastPoint.ToString();
 
-            return $"{ColumnX}: C={CeilingHeight}, W={WallHeight}, F={FloorHeight} (From {fromDesc} to {toDesc} - L={Math.Round(RaycastLength, 4)}, P={Math.Round(PerpendicularLength, 4)})";
+            return $"{ColumnX}: C={CeilingHeight}, W={WallHeight}, F={FloorHeight} (From {fromDesc} to {toDesc} - L={Math.Round(RaycastLength, 4)}, P={Math.Round(PerpendicularLength, 4)}) (Shading {Shading})";
         }
     }
 }

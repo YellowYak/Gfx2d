@@ -107,7 +107,6 @@ void UpdateGameState()
         newPlayerPos.X -= MathHelpers.Cos(prIndex) * playerMovementAcceleration;
         newPlayerPos.Y -= MathHelpers.Sin(prIndex) * playerMovementAcceleration;
         playerPosUpdated = true;
-        Debug.Print($"Player pos: {newPlayerPos}, CAI={state.CameraAngleIndex}, prIndex={prIndex}, CAdeg={MathHelpers.GetPossibleRotationRadians(state.CameraAngleIndex) * 180 / Math.PI}, prDeg={MathHelpers.GetPossibleRotationRadians(prIndex) * 180 / Math.PI}");
     }
 
     if (state.Key_D == KeyboardState.Pressed)
@@ -218,21 +217,6 @@ void RenderOverheadViewToPixelBuffer()
         new ColorArgb(255, 66, 66, 66)
     );
 }
-
-
-
-
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
-// TODO: Refactor logic here to loop across the screen (0..ScreenWidth) rather than looping through the angles
 
 void RenderFirstPersonViewToPixelBuffer()
 {
@@ -474,6 +458,10 @@ void RenderFirstPersonViewToPixelBuffer()
         Point2d raycastHit = new(raycast_ind_x + raycast_offset_x, raycast_ind_y + raycast_offset_y);
         double raycastLength = Point2d.GetLength(state.PlayerPos, raycastHit);
 
+        // Determine shading level based on the raycast length
+        double shading = raycastLength / 20;
+        shading = Math.Clamp(shading, 0, 0.66);
+
         // For determining the wall height we want the -perpendicular- distance from the player to the hit wall.
         // This is the line looking straight out from the player's POV. To calculate its length, we just need
         // a sprinkle of trig - we know the hypotonuse length (raycastLength) - so the perpendicular distance is
@@ -509,7 +497,7 @@ void RenderFirstPersonViewToPixelBuffer()
         int bottomOfWall = state.ScreenHeight - floorUpperBound;
         if (bottomOfWall == state.ScreenHeight)
             bottomOfWall--;
-        state.FillRectangle(currentColumnX, bottomOfCeiling, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay));
+        state.FillRectangle(currentColumnX, bottomOfCeiling, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay).ApplyShading(shading));
 
         if (floorUpperBound > 0)
             state.FillRectangle(currentColumnX, state.ScreenHeight - floorUpperBound, (currentColumnX + colsPerIteration) - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
@@ -522,6 +510,7 @@ void RenderFirstPersonViewToPixelBuffer()
                 ColumnX = currentColumnX,
                 RaycastLength = raycastLength,
                 PerpendicularLength = perpDistance,
+                Shading = shading,
                 FloorHeight = floorUpperBound,
                 WallHeight = bottomOfWall - bottomOfCeiling,
                 CeilingHeight = bottomOfCeiling,
