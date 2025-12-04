@@ -1,14 +1,14 @@
 {
     "dimensions": {
         "tileWidth": 1.0,
-        "wallHeight": 1.5
+        "wallHeight": 1.4
     },
     "startingPosition": {
         "playerPos": {
             "x": 8.5,
             "y": 2.75
         },
-        "cameraAngleRads": 3.14
+        "cameraAngleRads": 3.55
     },
     "ceilingColor": [255, 40, 40, 40],
     "floorColor": [255, 88, 88, 88],

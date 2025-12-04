@@ -281,12 +281,21 @@ void RenderFirstPersonViewToPixelBuffer()
         currentColumnX = leftBuffer;
     }
 
+    
+    // Determine the X and Y map indices for the player, as well as the offset within the tile.
+    int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / map.TileWidth);
+    double player_offset_x = state.PlayerPos.X - map.TileWidth * player_ind_x;
+
+    int player_ind_y = (int)MathHelpers.Floor(state.PlayerPos.Y / map.TileWidth);
+    double player_offset_y = state.PlayerPos.Y - map.TileWidth * player_ind_y;
+
+
     // Here we loop through each angle in the sweep!
     for (int rawCameraAngleIndex = startCameraAngleIndex; rawCameraAngleIndex < endCameraAngleIndex; rawCameraAngleIndex++)
     {
-        // Big picture, at each iteration we are shooting a "ray" from the player until it strikes a wall. We then compute the distance
-        // from the player and the wall and then use that to determine how much of the current column being drawn is composed of
-        // ceiling versus wall versus floor.
+        // Big picture, at each iteration we are shooting a "ray" from the player until it strikes a wall. We then compute the perpendicular distance
+        // from the player and the wall and then use that to determine how much of the current column being drawn is composed of ceiling versus
+        // wall versus floor.
 
         // Do we need to skip this angle index? If so, remove the entry from the front of the ordered array and then continue onto the next loop iteration
         if (sweepAnglesToIgnore != null && sweepAnglesToIgnore.Count > 0 && sweepAnglesToIgnore[0] == rawCameraAngleIndex)
@@ -294,13 +303,6 @@ void RenderFirstPersonViewToPixelBuffer()
             sweepAnglesToIgnore.RemoveAt(0);
             continue;
         }
-
-        // Determine the X and Y map indices for the player, as well as the offset within the tile.
-        int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / map.TileWidth);
-        double player_offset_x = state.PlayerPos.X - map.TileWidth * player_ind_x;
-
-        int player_ind_y = (int)MathHelpers.Floor(state.PlayerPos.Y / map.TileWidth);
-        double player_offset_y = state.PlayerPos.Y - map.TileWidth * player_ind_y;
 
         // Next, make sure that the camera angle index we are working with on this iteration is kosher. It must be greater than or equal to 0 and strictly less than PossibleRotationRadiansLength
         // If this isn't the case, adjust accordingly.
@@ -310,7 +312,6 @@ void RenderFirstPersonViewToPixelBuffer()
         else if (cameraAngleIndex > MathHelpers.PossibleRotationRadiansLength)
             cameraAngleIndex = cameraAngleIndex % MathHelpers.PossibleRotationRadiansLength;
 
-        
         // Next, determine the ray's current X and Y map indices, as well as its offset within the tile.
         int raycast_ind_x = player_ind_x;
         double raycast_offset_x = player_offset_x;
@@ -469,23 +470,34 @@ void RenderFirstPersonViewToPixelBuffer()
             currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
         }
 
-
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-        // TODO: Continue comments here...
-
-
-        // We've hit a wall! Huzzah!
+        // We've hit a wall! Huzzah! Determine the distance between the player and the point on the wall struck by the ray
         Point2d raycastHit = new(raycast_ind_x + raycast_offset_x, raycast_ind_y + raycast_offset_y);
         double raycastLength = Point2d.GetLength(state.PlayerPos, raycastHit);
 
-        int floorUpperBound = Math.Clamp(state.ScreenHeightHalved - (int)(state.CameraDistanceFromPlayer * state.CameraZ / raycastLength * state.ScreenHeight), 0, state.ScreenHeight);
-        int wallUpperBound = Math.Clamp((int)(state.CameraDistanceFromPlayer * map.WallHeight / raycastLength * state.ScreenHeight) + floorUpperBound, 0, state.ScreenHeight);
+        // For determining the wall height we want the -perpendicular- distance from the player to the hit wall.
+        // This is the line looking straight out from the player's POV. To calculate its length, we just need
+        // a sprinkle of trig - we know the hypotonuse length (raycastLength) - so the perpendicular distance is
+        // the length of the adjacent leg. The angle formed is the delta between the ray's angle and the camera angle.
+        int angleIndexDelta = Math.Abs(rawCameraAngleIndex - state.CameraAngleIndex);
 
+        // Ensure we don't get a zero, as we'll be dividing by this number
+        double perpDistance = Math.Max(0.0001, raycastLength * MathHelpers.Cos(angleIndexDelta));
+
+
+        // Next determine how many pixels the floor and ceiling will occupy.
+        int floorUpperBound = Math.Clamp(
+            value: state.ScreenHeightHalved - (int)(state.CameraDistanceFromPlayer * state.CameraZ / perpDistance * state.ScreenHeight),
+            min: 0,
+            max: state.ScreenHeight
+        );
+
+        int wallUpperBound = Math.Clamp(
+            value: (int)(state.CameraDistanceFromPlayer * map.WallHeight / perpDistance * state.ScreenHeight) + floorUpperBound,
+            min: 0,
+            max: state.ScreenHeight
+        );
+
+        // Map this to our coordinate system and start drawing!
         int bottomOfCeiling = state.ScreenHeight - wallUpperBound;
         if (bottomOfCeiling > 0)
         {
@@ -502,20 +514,27 @@ void RenderFirstPersonViewToPixelBuffer()
         if (floorUpperBound > 0)
             state.FillRectangle(currentColumnX, state.ScreenHeight - floorUpperBound, (currentColumnX + colsPerIteration) - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
 
+
         // Record details about the raycast just performed.
         raycastLengths.Add(
             new RaycastResult
             {
                 ColumnX = currentColumnX,
                 RaycastLength = raycastLength,
+                PerpendicularLength = perpDistance,
                 FloorHeight = floorUpperBound,
                 WallHeight = bottomOfWall - bottomOfCeiling,
-                CeilingHeight = bottomOfCeiling
+                CeilingHeight = bottomOfCeiling,
+                PlayerPos = state.PlayerPos,
+                RaycastPoint = raycastHit
             }
         );
 
+        // Move over to start drawing the next column(s) on screen
         currentColumnX += colsPerIteration;
     }
+
+    // DebugHelpers.LogIfFileDoesNotExist(raycastLengths, @"C:\Users\scott\OneDrive\My Projects\Programming Projects\Gfx2d\DebugLog\raycast.log");
 
     // Draw the right buffer, if needed
     if (leftBuffer > 0)

@@ -39,8 +39,8 @@
         /// <summary>
         /// Uses Pythagorean's theorem to return the length between two <see cref="Point2d"/> objects.
         /// </summary>
-        public static double GetLength(Point2d p1, Point2d p2) => Convert.ToSingle(Math.Sqrt((p2.X -  p1.X) * (p2.X - p1.X) + (p2.Y - p1.Y) * (p2.Y - p1.Y)));
+        public static double GetLength(Point2d p1, Point2d p2) => Math.Round(Convert.ToSingle(Math.Sqrt((p2.X -  p1.X) * (p2.X - p1.X) + (p2.Y - p1.Y) * (p2.Y - p1.Y))), 4);
         
-        public override string ToString() => $"({this.X}, {this.Y})";
+        public override string ToString() => $"({Math.Round(this.X, 4)}, {Math.Round(this.Y, 4)})";
     }
 }
