@@ -44,6 +44,30 @@
                     <Label Content="Resources:" Width="75" VerticalAlignment="Top"/>
                     <Button Content="Add Resource" FontSize="8" Margin="10,5"/>
                 </StackPanel>
+                <ListBox ItemsSource="{Binding ResourceReferences}" BorderThickness="0,0,0,0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding FileName}" VerticalAlignment="Center"/>
+
+                                <Button Grid.Column="1"
+                                    Content="🗑"
+                                    Margin="8,0,0,0"
+                                    Width="22"
+                                    Height="22"
+                                    Command="{Binding DataContext.RemoveResourceCommand,
+                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
             </StackPanel>
         </StackPanel>
     </Grid>

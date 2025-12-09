@@ -74,6 +74,37 @@ namespace Gfx2d.Resources
             File.WriteAllText(path, json);
         }
 
+        /// <summary>
+        /// Returns how many times a specific resource reference ID is used in the map.
+        /// </summary>
+        public int GetResourceReferenceUsageCount(int resourceRefId)
+        {
+            int count = 0;
+
+            foreach (var row in this.MapTiles)
+                foreach (int cell in row)
+                    if (cell == resourceRefId)
+                        count++;
+
+            return count;
+        }
+
+        /// <summary>
+        /// Remove all references to a particular resource from the map tiles.
+        /// </summary>
+        public void RemoveResourceReferenceFromMap(int resourceRefId)
+        {
+            for (int i = 0; i < MapTiles.Length; i++)
+            {
+                int[] row = MapTiles[i];
+
+                for (int j = 0; j < row.Length; j++)
+                {
+                    if (MapTiles[i][j] == resourceRefId)
+                        MapTiles[i][j] = 0;
+                }
+            }
+        }
 
         private Dictionary<int, MapResource> tileResources = new();
         public Dictionary<int, MapResource> GetTileResources() => this.tileResources;
