@@ -8,15 +8,15 @@ namespace Gfx2d.Resources
         public string Name { get; set; } = string.Empty;
 
         [JsonProperty("north", Required = Required.Always)]
-        public int[] North { get; set; } = Array.Empty<int>();
+        public byte[] North { get; set; } = Array.Empty<byte>();
 
         [JsonProperty("east", Required = Required.Always)]
-        public int[] East { get; set; } = Array.Empty<int>();
+        public byte[] East { get; set; } = Array.Empty<byte>();
 
         [JsonProperty("south", Required = Required.Always)]
-        public int[] South { get; set; } = Array.Empty<int>();
+        public byte[] South { get; set; } = Array.Empty<byte>();
 
         [JsonProperty("west", Required = Required.Always)]
-        public int[] West { get; set; } = Array.Empty<int>();
+        public byte[] West { get; set; } = Array.Empty<byte>();
     }
 }

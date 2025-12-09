@@ -17,8 +17,24 @@ namespace Gfx2d.ResourceEditor.ViewModels
             _filePath = path;
 
             _resourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
+
+            // Construct the MapCellViewModel collection from the underlying model's MapTiles
+            Dictionary<int, MapResource> resourceData = _model.GetTileResources();
+
+            _mapCells = new ObservableCollection<MapCellViewModel>();
+            for (int row = 0; row < _model.MapTiles.Length; row++)
+            {
+                int[] rowData = _model.MapTiles[row];
+                for (int col = 0; col < rowData.Length; col++)
+                {
+                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : ColorArgb.LightGray();
+
+                    _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
+                }
+            }
         }
 
+        #region IsDirty
         private bool _isDirty;
         public bool IsDirty
         {
@@ -32,7 +48,9 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 }
             }
         }
+        #endregion
 
+        #region FilePath
         public bool HasBeenSaved => !string.IsNullOrEmpty(this.FilePath);
 
         private string? _filePath = null;
@@ -49,7 +67,9 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 }
             }
         }
+        #endregion
 
+        #region WindowTitle
         public string WindowTitle
         {
             get
@@ -61,10 +81,12 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 else
                     fileNameDisplay = System.IO.Path.GetFileNameWithoutExtension(this.FilePath);
 
-                return $"Resource Editor - {fileNameDisplay}";
+                return $"Resource Editor - {fileNameDisplay} ({MapSize})";
             }
         }
+        #endregion
 
+        #region Name
         public string Name
         {
             get => _model.Name;
@@ -78,7 +100,9 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 }
             }
         }
+        #endregion
 
+        #region Description
         public string Description
         {
             get => _model.Description;
@@ -92,18 +116,29 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 }
             }
         }
+        #endregion
 
-        public string MapSize
+        #region Map Size
+        public int MapWidth => _model.MapTiles.Max(tr => tr.Length);
+        public int MapHeight => _model.MapTiles.Length;
+
+        public string MapSize => $"{MapWidth}x{MapHeight}";
+        #endregion
+
+        #region Map Cells
+        private ObservableCollection<MapCellViewModel> _mapCells;
+        public ObservableCollection<MapCellViewModel> MapCells
         {
-            get
+            get => _mapCells;
+            private set
             {
-                int width = _model.MapTiles.Max(tr => tr.Length);
-                int height = _model.MapTiles.Length;
-
-                return $"{width}x{height}";
+                _mapCells = value;
+                OnPropertyChanged(nameof(MapCells));
             }
         }
+        #endregion
 
+        #region Resource References
         private ObservableCollection<ResourceReference> _resourceReferences;
         public ObservableCollection<ResourceReference> ResourceReferences
         {
@@ -160,14 +195,27 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
         public ICommand RemoveResourceCommand => new RelayCommand<ResourceReference>(RemoveResourceReference);
 
+        public ICommand UnselectResourceReferenceCommand => new RelayCommand<ResourceReference>(
+            UnselectResourceReference,
+            rr => rr != null
+        );
 
+        private void UnselectResourceReference(ResourceReference currentlySelectedResourceRef)
+        {
+            SelectedResourceReference = null;
+        }
+        #endregion
+
+        #region PropertyChanged Event
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+        #endregion
 
+        #region Methods
         public void Save()
         {
             if (string.IsNullOrEmpty(this.FilePath)) throw new ArgumentNullException(nameof(this.FilePath));
@@ -176,5 +224,6 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
             _model.Save(this.FilePath);
         }
+        #endregion
     }
 }

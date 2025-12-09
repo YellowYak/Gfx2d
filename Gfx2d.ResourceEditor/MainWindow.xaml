@@ -25,51 +25,121 @@
         </Menu>
 
         <!-- Main content -->
-        <StackPanel Grid.Row="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <!-- Each field in a horizontal StackPanel -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <Label Content="Name:" Width="75" VerticalAlignment="Top"/>
-                <TextBox Width="200" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <Label Content="Description:" Width="75" VerticalAlignment="Top"/>
-                <TextBox Width="200" Height="100" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <Label Content="Size:" Width="75" VerticalAlignment="Top"/>
-                <Label Width="200" Content="{Binding MapSize}" FontWeight="Bold" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <StackPanel Orientation="Vertical">
-                    <Label Content="Resources:" Width="75" VerticalAlignment="Top"/>
-                    <Button Content="Add Resource" FontSize="8" Margin="10,5"/>
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ========================= -->
+            <!-- LEFT SIDE: FORM CONTROLS -->
+            <!-- ========================= -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Top">
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Name:" Width="75"/>
+                    <TextBox Width="200"
+                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <ListBox ItemsSource="{Binding ResourceReferences}" BorderThickness="0,0,0,0">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding FileName}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Description:" Width="75"/>
+                    <TextBox Width="200"
+                     Height="100"
+                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                     TextWrapping="Wrap"/>
+                </StackPanel>
 
-                                <Button Grid.Column="1"
-                                    Content="🗑"
-                                    Margin="8,0,0,0"
-                                    Width="22"
-                                    Height="22"
-                                    Command="{Binding DataContext.RemoveResourceCommand,
-                                                      RelativeSource={RelativeSource AncestorType=Window}}"
-                                    CommandParameter="{Binding}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Size:" Width="75"/>
+                    <Label Width="200"
+                   Content="{Binding MapSize}"
+                   FontWeight="Bold"/>
+                </StackPanel>
 
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Resources:" Width="75"/>
+                        <Button Content="Add Resource"
+                                ToolTip="Add a new resource to this level."
+                                FontSize="8"
+                                Margin="10,5"/>
+                        <Button Content="Unselect"
+                                Command="{Binding UnselectResourceReferenceCommand}"
+                                CommandParameter="{Binding SelectedResourceReference}"
+                                ToolTip="Unselects the map resource. Once unselected, drawing on the map will put place floors."
+                                FontSize="8"
+                                Margin="10,5"/>
+                    </StackPanel>
+
+                    <ListBox ItemsSource="{Binding ResourceReferences}"
+                             SelectedItem="{Binding SelectedResourceReference, Mode=TwoWay}"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               VerticalAlignment="Center"/>
+
+                                    <Button Grid.Column="1"
+                                            Content="🗑"
+                                            Margin="8,0,0,0"
+                                            Width="22"
+                                            Height="22"
+                                            Focusable="False"
+                                            Command="{Binding DataContext.RemoveResourceCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+
+            <!-- ================================ -->
+            <!-- RIGHT SIDE: SCROLLABLE GRID VIEW -->
+            <!-- ================================ -->
+            <ScrollViewer Grid.Column="1"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          Margin="10,0,0,0">
+                <ItemsControl ItemsSource="{Binding MapCells}"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid
+                                Rows="{Binding MapHeight}"
+                                Columns="{Binding MapWidth}"
+                            />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    Background="{Binding CellBrush}"
+                                    Width="24"
+                                    Height="24">
+                                <TextBlock Text="{Binding Value}"
+                                   Foreground="{Binding TextColor}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </Grid>
+
     </Grid>
 
     <Window.InputBindings>

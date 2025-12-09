@@ -5,12 +5,12 @@
     /// </summary>
     public class ColorArgb
     {
-        public int A { get; private set; }
-        public int R { get; private set; }
-        public int G { get; private set; }
-        public int B { get; private set; }
+        public byte A { get; private set; }
+        public byte R { get; private set; }
+        public byte G { get; private set; }
+        public byte B { get; private set; }
 
-        public ColorArgb(int a, int r, int g, int b)
+        public ColorArgb(byte a, byte r, byte g, byte b)
         {
             A = a;
             R = r;
@@ -34,12 +34,14 @@
 
             return new ColorArgb(
                 this.A,
-                (int)((double)this.R * shadingPercent),
-                (int)((double)this.G * shadingPercent),
-                (int)((double)this.B * shadingPercent)
+                (byte)((double)this.R * shadingPercent),
+                (byte)((double)this.G * shadingPercent),
+                (byte)((double)this.B * shadingPercent)
             );
         }
 
         public static ColorArgb Black() => new ColorArgb(255, 0, 0, 0);
+        public static ColorArgb White() => new ColorArgb(255, 255, 255, 255);
+        public static ColorArgb LightGray() => new ColorArgb(255, 222, 222, 222);
     }
 }

@@ -148,9 +148,9 @@ namespace Gfx2d.Resources
         public ResourceReference[] TileResources { get; set; } = Array.Empty<ResourceReference>();
 
         [JsonProperty("ceilingColor", Required = Required.Always)]
-        public int[] CeilingColor { get; set; } = Array.Empty<int>();
+        public byte[] CeilingColor { get; set; } = Array.Empty<byte>();
 
         [JsonProperty("floorColor", Required = Required.Always)]
-        public int[] FloorColor { get; set; } = Array.Empty<int>();
+        public byte[] FloorColor { get; set; } = Array.Empty<byte>();
     }
 }

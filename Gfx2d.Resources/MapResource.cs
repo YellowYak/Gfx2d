@@ -35,7 +35,7 @@
 
         public static MapResource Create(
             string name,
-            int[] argb
+            byte[] argb
         )
         {
             MapResource resource = new();
@@ -52,10 +52,10 @@
 
         public static MapResource Create(
             string name,
-            int[] northArgb,
-            int[] eastArgb,
-            int[] southArgb,
-            int[] westArgb
+            byte[] northArgb,
+            byte[] eastArgb,
+            byte[] southArgb,
+            byte[] westArgb
         )
         {
             MapResource resource = new();
