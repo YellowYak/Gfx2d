@@ -7,13 +7,13 @@ namespace Gfx2d.Resources
         /// <summary>
         /// The dimensions of each tile on the map. All tiles on the map are a square.
         /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public double TileWidth { get; set; }
+        [JsonProperty("tileWidth", Required = Required.Always)]
+        public double TileWidth { get; set; } = 1;
 
         /// <summary>
         /// The height of all walls on the map.
         /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public double WallHeight { get; set; }
+        [JsonProperty("wallHeight", Required = Required.Always)]
+        public double WallHeight { get; set; } = 1.4;
     }
 }

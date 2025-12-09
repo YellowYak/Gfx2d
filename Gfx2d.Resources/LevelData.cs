@@ -5,6 +5,24 @@ namespace Gfx2d.Resources
     public class LevelData
     {
         /// <summary>
+        /// Determines if a specific file is a valid level data file.
+        /// </summary>
+        /// <returns>True if the specified file exists and can be deserialized without error; false otherwise.</returns>
+        public static bool ValidLevelFile(string levelDataFilePath)
+        {
+            try
+            {
+                string json = File.ReadAllText(levelDataFilePath);
+                JsonConvert.DeserializeObject<LevelData>(json);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Loads a level and its associated resources from a JSON file.
         /// </summary>
         public static LevelData LoadFromFile(string levelDataFilePath)
@@ -47,33 +65,61 @@ namespace Gfx2d.Resources
             return level;
         }
 
+        /// <summary>
+        /// Serializes the JSON and saves the level data to the specified path.
+        /// </summary>
+        public void Save(string path)
+        {
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(path, json);
+        }
+
 
         private Dictionary<int, MapResource> tileResources = new();
         public Dictionary<int, MapResource> GetTileResources() => this.tileResources;
 
         private MapResource floorResource = new();
+        [JsonIgnore]
         public MapResource FloorResource => floorResource;
 
         private MapResource ceilingResource = new();
+        [JsonIgnore]
         public MapResource CeilingResource => ceilingResource;
 
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("name")]
+        public string Name { get; set; } = "New level";
+        
+        [JsonProperty("description")]
+        public string Description { get; set; } = string.Empty;
+
+        [JsonProperty("dimensions", Required = Required.Always)]
         public LevelDimensions Dimensions { get; set; } = new();
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("startingPosition", Required = Required.Always)]
         public LevelStartingPosition StartingPosition { get; set; } = new();
 
-        [JsonProperty(Required = Required.Always)]
-        public int[][] MapTiles { get; set; } = Array.Empty<int[]>();
+        [JsonProperty("mapTiles", Required = Required.Always)]
+        public int[][] MapTiles { get; set; } = {
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        };
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("tileResources", Required = Required.Always)]
         public ResourceReference[] TileResources { get; set; } = Array.Empty<ResourceReference>();
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("ceilingColor", Required = Required.Always)]
         public int[] CeilingColor { get; set; } = Array.Empty<int>();
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("floorColor", Required = Required.Always)]
         public int[] FloorColor { get; set; } = Array.Empty<int>();
     }
 }

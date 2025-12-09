@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.Engine", "Gfx2d.Engine\Gfx2d.Engine.csproj", "{D368FE21-6302-446B-8379-BAD2698925CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.Resources", "Gfx2d.Resources\Gfx2d.Resources.csproj", "{781F6BED-9551-AF78-3EA9-6211CFA1685B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.ResourceEditor", "Gfx2d.ResourceEditor\Gfx2d.ResourceEditor.csproj", "{D8EF1118-E657-4EFE-8E6F-57E383E14007}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
