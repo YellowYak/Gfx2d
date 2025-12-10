@@ -1,4 +1,5 @@
-﻿using Gfx2d.Resources;
+﻿using Gfx2d.ResourceEditor.Commands;
+using Gfx2d.Resources;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -19,7 +20,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
             _resourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
 
             // Construct the MapCellViewModel collection from the underlying model's MapTiles
-            Dictionary<int, MapResource> resourceData = _model.GetTileResources();
+            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
 
             _mapCells = new ObservableCollection<MapCellViewModel>();
             for (int row = 0; row < _model.MapTiles.Length; row++)
@@ -162,6 +163,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
             }
         }
 
+        public ICommand RemoveResourceCommand => new RelayCommand<ResourceReference>(RemoveResourceReference);
         public void RemoveResourceReference(ResourceReference resourceRef)
         {
             if (resourceRef == null) return;
@@ -184,7 +186,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
             // Remove the ResourceReference from both the view model and underlying model
             ResourceReferences.Remove(resourceRef);
-            _model.TileResources = ResourceReferences.ToArray();
+            _model.TileResources = ResourceReferences.ToList();
 
             // Remove all references to the resouce reference from the map, if any
             if (rrCount > 0)
@@ -193,16 +195,51 @@ namespace Gfx2d.ResourceEditor.ViewModels
             IsDirty = true;
         }
 
-        public ICommand RemoveResourceCommand => new RelayCommand<ResourceReference>(RemoveResourceReference);
-
         public ICommand UnselectResourceReferenceCommand => new RelayCommand<ResourceReference>(
             UnselectResourceReference,
             rr => rr != null
         );
-
         private void UnselectResourceReference(ResourceReference currentlySelectedResourceRef)
         {
             SelectedResourceReference = null;
+        }
+
+        public ICommand AddResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddResourceReference);
+        private void AddResourceReference(IEnumerable<string> paths)
+        {
+            // First make sure all files are kosher
+            foreach(string path in paths)
+                if (!ResourceData.ValidFile(path))
+                    throw new Exception($"The resource file {path} either does not exist, cannot be opened, or is an invalid level data file.");
+
+            // Determine max ResourceRefId being used in this level
+            int currentRrId = 1;
+            if (_model.TileResources.Any())
+                currentRrId = _model.TileResources.Max(rr => rr.Id) + 1;
+
+            // Now load them up!
+            foreach (string path in paths)
+            {
+                ResourceData rd = ResourceData.LoadFromFile(path);
+
+                // Create new ResourceReference
+                ResourceReference rr = new()
+                {
+                    Id = currentRrId,
+                    FileName = System.IO.Path.GetFileName(path)
+                };
+
+                _model.TileResources.Add(rr);
+
+                _model.AddMapTileResource(
+                    rr.Id,
+                    rd
+                );
+
+                currentRrId++;
+            }
+
+            ResourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
         }
         #endregion
 

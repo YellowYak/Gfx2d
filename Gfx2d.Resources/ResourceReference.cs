@@ -10,6 +10,7 @@ namespace Gfx2d.Resources
         [JsonProperty("fileName", Required = Required.Always)]
         public string FileName { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public string DisplayName => $"{Id}: {FileName}";
     }
 }

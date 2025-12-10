@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Gfx2d.Resources
 {
@@ -8,11 +9,11 @@ namespace Gfx2d.Resources
         /// Determines if a specific file is a valid level data file.
         /// </summary>
         /// <returns>True if the specified file exists and can be deserialized without error; false otherwise.</returns>
-        public static bool ValidLevelFile(string levelDataFilePath)
+        public static bool ValidFile(string path)
         {
             try
             {
-                string json = File.ReadAllText(levelDataFilePath);
+                string json = File.ReadAllText(path);
                 JsonConvert.DeserializeObject<LevelData>(json);
                 return true;
             }
@@ -25,19 +26,19 @@ namespace Gfx2d.Resources
         /// <summary>
         /// Loads a level and its associated resources from a JSON file.
         /// </summary>
-        public static LevelData LoadFromFile(string levelDataFilePath)
+        public static LevelData LoadFromFile(string path)
         {
-            if (string.IsNullOrEmpty(levelDataFilePath)) throw new ArgumentNullException(nameof(levelDataFilePath));
-            if (!File.Exists(levelDataFilePath)) throw new FileNotFoundException("Level file not found.", levelDataFilePath);
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
+            if (!File.Exists(path)) throw new FileNotFoundException("Level file not found.", path);
 
-            string folder = Path.GetDirectoryName(levelDataFilePath)!;
+            string folder = Path.GetDirectoryName(path)!;
 
             // Read in the level JSON file
-            string json = File.ReadAllText(levelDataFilePath);
+            string json = File.ReadAllText(path);
             var level = JsonConvert.DeserializeObject<LevelData>(json)!;
 
             // Loop through the level's tile resources and load those in
-            level.tileResources.Clear();
+            level.mapTileResources.Clear();
             foreach (ResourceReference rr in level.TileResources)
             {
                 string fullPath = Path.Combine(folder, rr.FileName);
@@ -46,15 +47,9 @@ namespace Gfx2d.Resources
                 string resourceJson = File.ReadAllText(fullPath);
                 ResourceData data = JsonConvert.DeserializeObject<ResourceData>(resourceJson)!;
 
-                level.tileResources.Add(
+                level.AddMapTileResource(
                     rr.Id,
-                    MapResource.Create(
-                        data.Name,
-                        data.North,
-                        data.East,
-                        data.South,
-                        data.West
-                    )
+                    data
                 );
             }
 
@@ -106,8 +101,22 @@ namespace Gfx2d.Resources
             }
         }
 
-        private Dictionary<int, MapResource> tileResources = new();
-        public Dictionary<int, MapResource> GetTileResources() => this.tileResources;
+        private Dictionary<int, MapResource> mapTileResources = new();
+        public Dictionary<int, MapResource> GetMapTileResources() => this.mapTileResources;
+        public void AddMapTileResource(int resourceRefId, MapResource tileResource)
+        {
+            mapTileResources.Add(
+                resourceRefId,
+                tileResource
+            );
+        }
+        public void AddMapTileResource(int resourceRefId, ResourceData resource)
+        {
+            AddMapTileResource(
+                resourceRefId,
+                MapResource.Create(resource)
+            );
+        }
 
         private MapResource floorResource = new();
         [JsonIgnore]
@@ -145,7 +154,7 @@ namespace Gfx2d.Resources
         };
 
         [JsonProperty("tileResources", Required = Required.Always)]
-        public ResourceReference[] TileResources { get; set; } = Array.Empty<ResourceReference>();
+        public List<ResourceReference> TileResources { get; set; } = new();
 
         [JsonProperty("ceilingColor", Required = Required.Always)]
         public byte[] CeilingColor { get; set; } = Array.Empty<byte>();

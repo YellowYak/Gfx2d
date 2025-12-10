@@ -1,4 +1,5 @@
-﻿using Gfx2d.ResourceEditor.ViewModels;
+﻿using Gfx2d.ResourceEditor.Commands;
+using Gfx2d.ResourceEditor.ViewModels;
 using Gfx2d.Resources;
 using System.Windows;
 using System.Windows.Input;
@@ -29,6 +30,8 @@ namespace Gfx2d.ResourceEditor
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, HandleCommandSave));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, HandleCommandSaveAs));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, HandleCommandClose));
+
+            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.AddResource, ExecuteAddResource));
         }
 
         void HandleCommandNew(object sender, ExecutedRoutedEventArgs e)
@@ -53,7 +56,7 @@ namespace Gfx2d.ResourceEditor
             if (result == true && CanProceedWithUnsavedChanges())
             {
                 string selectedFilePath = dlg.FileName;
-                if (!LevelData.ValidLevelFile(selectedFilePath))
+                if (!LevelData.ValidFile(selectedFilePath))
                     MessageBox.Show(
                         messageBoxText: $"The level data file you attempted to load - {selectedFilePath} - either does not exist, cannot be opened, or is an invalid level data file.",
                         caption: "Missing or invalid level data file",
@@ -118,6 +121,37 @@ namespace Gfx2d.ResourceEditor
                 caption: "Unsaved Changes!",
                 button: MessageBoxButton.YesNo
             ) == MessageBoxResult.Yes;
+        }
+
+        private void ExecuteAddResource(object sender, ExecutedRoutedEventArgs e)
+        {
+            // Have the user select the resource JSON file
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Open Resource File",
+                Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+                DefaultExt = ".json",
+                Multiselect = true
+            };
+
+            bool? result = dlg.ShowDialog(this);
+
+            if (result == true)
+            {
+                try
+                {
+                    ViewModel.AddResourceReferenceCommand.Execute(dlg.FileNames);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        messageBoxText: ex.Message,
+                        caption: "Error Loading Resource File",
+                        button: MessageBoxButton.OK,
+                        icon: MessageBoxImage.Error
+                    );
+                }
+            }
         }
     }
 }

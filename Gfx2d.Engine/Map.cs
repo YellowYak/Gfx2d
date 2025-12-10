@@ -54,7 +54,7 @@ namespace Gfx2d.Engine
 
             int resourceId = this.LevelData.MapTiles[y_index][x_index];
 
-            return resourceId == 0 ? null : this.LevelData.GetTileResources()[resourceId];
+            return resourceId == 0 ? null : this.LevelData.GetMapTileResources()[resourceId];
         }
 
         /// <summary>

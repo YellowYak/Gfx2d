@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gfx2d.ResourceEditor"
+        xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="450" Width="800">
+        Title="{Binding WindowTitle}" Height="1000" Width="1200">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -61,6 +62,7 @@
                     <StackPanel Orientation="Vertical">
                         <Label Content="Resources:" Width="75"/>
                         <Button Content="Add Resource"
+                                Command="{x:Static cmd:ResourceEditorCommands.AddResource}"
                                 ToolTip="Add a new resource to this level."
                                 FontSize="8"
                                 Margin="10,5"/>
@@ -125,8 +127,8 @@
                             <Border BorderBrush="Gray"
                                     BorderThickness="1"
                                     Background="{Binding CellBrush}"
-                                    Width="24"
-                                    Height="24">
+                                    Width="50"
+                                    Height="50">
                                 <TextBlock Text="{Binding Value}"
                                    Foreground="{Binding TextColor}"
                                    HorizontalAlignment="Center"
@@ -151,4 +153,36 @@
                 Command="ApplicationCommands.New"/>
     </Window.InputBindings>
 
+    <Window.Resources>
+        <!-- This ListBox-related styling was taken from https://stackoverflow.com/a/57553730/160830 and is meant to keep the selected item showing the "selected" color even when the ListBox loses focus. -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <!--  Revert to the "Windows 7" style template that used "SystemColors.HighlightBrushKey" etc  -->
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border
+                            x:Name="ItemBorder"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!--  Use the same colours for selected items, whether or not the control has focus  -->
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 </Window>

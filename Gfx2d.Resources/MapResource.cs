@@ -69,5 +69,19 @@
 
             return resource;
         }
+
+        public static MapResource Create(ResourceData resourceData)
+        {
+            MapResource resource = new();
+
+            resource.Name = resourceData.Name;
+
+            resource.NorthColor = new ColorArgb(resourceData.North[0], resourceData.North[1], resourceData.North[2], resourceData.North[3]);
+            resource.EastColor = new ColorArgb(resourceData.East[0], resourceData.East[1], resourceData.East[2], resourceData.East[3]);
+            resource.SouthColor = new ColorArgb(resourceData.South[0], resourceData.South[1], resourceData.South[2], resourceData.South[3]);
+            resource.WestColor = new ColorArgb(resourceData.North[0], resourceData.North[1], resourceData.North[2], resourceData.North[3]);
+
+            return resource;
+        }
     }
 }
