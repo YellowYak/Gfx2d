@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Gfx2d.Resources.Serialization;
+using Newtonsoft.Json;
 
 namespace Gfx2d.Resources
 {
@@ -157,9 +157,11 @@ namespace Gfx2d.Resources
         public List<ResourceReference> TileResources { get; set; } = new();
 
         [JsonProperty("ceilingColor", Required = Required.Always)]
-        public byte[] CeilingColor { get; set; } = Array.Empty<byte>();
+        [JsonConverter(typeof(ByteArrayAsArrayConverter))]
+        public byte[] CeilingColor { get; set; } = { 255, 40, 40, 40 };
 
         [JsonProperty("floorColor", Required = Required.Always)]
-        public byte[] FloorColor { get; set; } = Array.Empty<byte>();
+        [JsonConverter(typeof(ByteArrayAsArrayConverter))]
+        public byte[] FloorColor { get; set; } = { 255, 90, 90, 90 };
     }
 }

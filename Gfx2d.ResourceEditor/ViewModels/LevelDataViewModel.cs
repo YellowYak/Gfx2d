@@ -1,10 +1,12 @@
 ﻿using Gfx2d.ResourceEditor.Commands;
+using Gfx2d.ResourceEditor.Extensions;
 using Gfx2d.Resources;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Gfx2d.ResourceEditor.ViewModels
 {
@@ -16,6 +18,20 @@ namespace Gfx2d.ResourceEditor.ViewModels
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));
             _filePath = path;
+
+            _ceilingColor = Color.FromArgb(
+                _model.CeilingColor[0],
+                _model.CeilingColor[1],
+                _model.CeilingColor[2],
+                _model.CeilingColor[3]
+            );
+
+            _floorColor = Color.FromArgb(
+                _model.FloorColor[0],
+                _model.FloorColor[1],
+                _model.FloorColor[2],
+                _model.FloorColor[3]
+            );
 
             _resourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
 
@@ -119,6 +135,40 @@ namespace Gfx2d.ResourceEditor.ViewModels
         }
         #endregion
 
+        #region Ceiling Color
+        private Color _ceilingColor;
+        public Color CeilingColor
+        {
+            get => _ceilingColor;
+            set
+            {
+                if (_ceilingColor != value)
+                {
+                    _ceilingColor = value;
+                    _model.CeilingColor = value.ToByteArray();
+                    OnPropertyChanged(nameof(CeilingColor));
+                }
+            }
+        }
+        #endregion
+
+        #region Floor Color
+        private Color _floorColor;
+        public Color FloorColor
+        {
+            get => _floorColor;
+            set
+            {
+                if (_floorColor != value)
+                {
+                    _floorColor = value;
+                    _model.FloorColor = value.ToByteArray();
+                    OnPropertyChanged(nameof(FloorColor));
+                }
+            }
+        }
+        #endregion
+
         #region Map Size
         public int MapWidth => _model.MapTiles.Max(tr => tr.Length);
         public int MapHeight => _model.MapTiles.Length;
@@ -208,7 +258,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
         private void AddResourceReference(IEnumerable<string> paths)
         {
             // First make sure all files are kosher
-            foreach(string path in paths)
+            foreach (string path in paths)
                 if (!ResourceData.ValidFile(path))
                     throw new Exception($"The resource file {path} either does not exist, cannot be opened, or is an invalid level data file.");
 

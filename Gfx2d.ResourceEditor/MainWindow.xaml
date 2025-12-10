@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gfx2d.ResourceEditor"
         xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="1000" Width="1200">
     <Grid>
@@ -49,6 +50,24 @@
                      Height="100"
                      Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                      TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Ceiling Clr:" Width="75"/>
+                    <xctk:ColorPicker
+                        Width="200"
+                        ColorMode="ColorCanvas"
+                        SelectedColor="{Binding CeilingColor, Mode=TwoWay}"
+                    />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Floor Clr:" Width="75"/>
+                    <xctk:ColorPicker
+                        Width="200"
+                        ColorMode="ColorCanvas"
+                        SelectedColor="{Binding FloorColor, Mode=TwoWay}"
+                    />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
