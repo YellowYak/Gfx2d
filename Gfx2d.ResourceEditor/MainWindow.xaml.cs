@@ -95,10 +95,14 @@ namespace Gfx2d.ResourceEditor
             }
         }
 
-        void HandleCommandClose(object sender, ExecutedRoutedEventArgs e)
+        // For the Application.Close command simply close the window straightaway.
+        // The dirty check is done in the Window's Closing event handler.
+        void HandleCommandClose(object sender, ExecutedRoutedEventArgs e) => Close();
+
+        private void winMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (CanProceedWithUnsavedChanges())
-                Close();
+            if (!CanProceedWithUnsavedChanges())
+                e.Cancel = true;
         }
         #endregion
 

@@ -79,6 +79,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 if (_filePath != value)
                 {
                     _filePath = value;
+                    IsDirty = true;
                     OnPropertyChanged(nameof(FilePath));
                     OnPropertyChanged(nameof(WindowTitle));
                 }
@@ -146,6 +147,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 {
                     _ceilingColor = value;
                     _model.CeilingColor = value.ToByteArray();
+                    IsDirty = true;
                     OnPropertyChanged(nameof(CeilingColor));
                 }
             }
@@ -163,6 +165,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 {
                     _floorColor = value;
                     _model.FloorColor = value.ToByteArray();
+                    IsDirty = true;
                     OnPropertyChanged(nameof(FloorColor));
                 }
             }

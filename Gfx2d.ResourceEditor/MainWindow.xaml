@@ -1,4 +1,4 @@
-﻿<Window x:Class="Gfx2d.ResourceEditor.MainWindow"
+﻿<Window x:Name="winMainWindow" x:Class="Gfx2d.ResourceEditor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
         xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="1000" Width="1200">
+        Title="{Binding WindowTitle}" Height="1000" Width="1200" Closing="winMainWindow_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
