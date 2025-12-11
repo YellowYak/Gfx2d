@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace Gfx2d.ResourceEditor.ViewModels
 {
-    public class LevelDataViewModel : INotifyPropertyChanged
+    public class LevelDataViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private readonly LevelData _model;
 
@@ -37,6 +37,49 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
             ConstructMapCellsCollection();            
         }
+
+        #region Data Validation
+        public string Error => string.Empty;
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string result = string.Empty;
+
+                if (columnName == nameof(Name))
+                {
+                    if (string.IsNullOrWhiteSpace(Name))
+                        result = "Name is required.";
+                }
+                else if (columnName == nameof(TileWidthText))
+                {
+                    if (string.IsNullOrWhiteSpace(TileWidthText))
+                        result = "Tile Size is required.";
+                    else if (!double.TryParse(TileWidthText, out double tw))
+                        result = "Tile Size must be a valid number.";
+                    else if (tw <= 0)
+                        result = "Tile Size must be greater than 0.";
+                }
+                else if (columnName == nameof(WallHeightText))
+                {
+                    if (string.IsNullOrWhiteSpace(WallHeightText))
+                        result = "Wall Height is required.";
+                    else if (!double.TryParse(WallHeightText, out double wh))
+                        result = "Wall Height must be a valid number.";
+                    else if (wh <= 0)
+                        result = "Wall Height must be greater than 0.";
+                }
+
+                return result;
+            }
+        }
+
+        public bool IsValid =>
+                string.IsNullOrEmpty(this[nameof(Name)]) &&
+                string.IsNullOrEmpty(this[nameof(TileWidthText)]) &&
+                string.IsNullOrEmpty(this[nameof(WallHeightText)]);
+        #endregion
 
         #region IsDirty
         private bool _isDirty;
@@ -107,6 +150,73 @@ namespace Gfx2d.ResourceEditor.ViewModels
         }
         #endregion
 
+        #region Tile Width
+        private string? _tileWidthText;
+        public string TileWidthText
+        {
+            get => _tileWidthText ?? TileWidth.ToString();
+            set
+            {
+                _tileWidthText = value;
+                OnPropertyChanged(nameof(TileWidthText));
+
+                // Only update the actual double if valid
+                if (double.TryParse(value, out double result))
+                {
+                    TileWidth = result;
+                }
+            }
+        }
+
+        public double TileWidth
+        {
+            get => _model.Dimensions.TileWidth;
+            set
+            {
+                if (_model.Dimensions.TileWidth != value)
+                {
+                    _model.Dimensions.TileWidth = value;
+                    IsDirty = true;
+                    OnPropertyChanged(nameof(TileWidth));
+                }
+            }
+        }
+        #endregion
+
+        #region Wall Height
+
+        private string? _wallHeightText = null;
+        public string WallHeightText
+        {
+            get => _wallHeightText ?? WallHeight.ToString();
+            set
+            {
+                _wallHeightText = value;
+                OnPropertyChanged(nameof(WallHeightText));
+
+                // Only update the actual double if valid
+                if (double.TryParse(value, out double result))
+                {
+                    WallHeight = result;
+                }
+            }
+        }
+
+        public double WallHeight
+        {
+            get => _model.Dimensions.WallHeight;
+            set
+            {
+                if (_model.Dimensions.WallHeight != value)
+                {
+                    _model.Dimensions.WallHeight = value;
+                    IsDirty = true;
+                    OnPropertyChanged(nameof(WallHeight));
+                }
+            }
+        }
+        #endregion
+
         #region Description
         public string Description
         {
@@ -167,7 +277,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
         #endregion
 
         #region Map Cells
-        private ObservableCollection<MapCellViewModel> _mapCells;
+        private ObservableCollection<MapCellViewModel> _mapCells = new();
         public ObservableCollection<MapCellViewModel> MapCells
         {
             get => _mapCells;

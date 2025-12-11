@@ -41,15 +41,27 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <Label Content="Name:" Width="75"/>
                     <TextBox Width="200"
-                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                             Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <Label Content="Description:" Width="75"/>
                     <TextBox Width="200"
-                     Height="100"
-                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                     TextWrapping="Wrap"/>
+                             Height="100"
+                             Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                             TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Tile Size:" Width="75"/>
+                    <TextBox Width="200"
+                             Text="{Binding TileWidthText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Wall Height:" Width="75"/>
+                    <TextBox Width="200"
+                             Text="{Binding WallHeightText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">

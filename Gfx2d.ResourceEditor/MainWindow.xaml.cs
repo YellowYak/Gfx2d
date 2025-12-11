@@ -72,6 +72,8 @@ namespace Gfx2d.ResourceEditor
 
         void HandleCommandSave(object sender, ExecutedRoutedEventArgs e)
         {
+            if (!IsValidCheck()) return;
+
             if (!ViewModel.HasBeenSaved)
                 HandleCommandSaveAs(sender, e);
             else
@@ -80,6 +82,8 @@ namespace Gfx2d.ResourceEditor
 
         void HandleCommandSaveAs(object sender, ExecutedRoutedEventArgs e)
         {
+            if (!IsValidCheck()) return;
+
             var dlg = new Microsoft.Win32.SaveFileDialog
             {
                 Title = "Save Level Data",
@@ -117,6 +121,25 @@ namespace Gfx2d.ResourceEditor
                 level = LevelData.LoadFromFile(path);
 
             DataContext = new LevelDataViewModel(level!, path);
+        }
+
+        /// <summary>
+        /// Checks to see if the view model is valid. If so, returns true. If not, shows a message box and returns false.
+        /// </summary>
+        bool IsValidCheck()
+        {
+            if (ViewModel.IsValid)
+                return true;
+            else
+            {
+                MessageBox.Show(
+                    messageBoxText: "There are invalid inputs. These must be fixed before you can save.",
+                    caption: "Invalid Data",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Warning
+                );
+                return false;
+            }
         }
 
         bool CanProceedWithUnsavedChanges()
