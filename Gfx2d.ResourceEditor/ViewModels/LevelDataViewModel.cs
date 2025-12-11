@@ -35,20 +35,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
             _resourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
 
-            // Construct the MapCellViewModel collection from the underlying model's MapTiles
-            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
-
-            _mapCells = new ObservableCollection<MapCellViewModel>();
-            for (int row = 0; row < _model.MapTiles.Length; row++)
-            {
-                int[] rowData = _model.MapTiles[row];
-                for (int col = 0; col < rowData.Length; col++)
-                {
-                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : ColorArgb.LightGray();
-
-                    _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
-                }
-            }
+            ConstructMapCellsCollection();            
         }
 
         #region IsDirty
@@ -365,6 +352,57 @@ namespace Gfx2d.ResourceEditor.ViewModels
             this.IsDirty = false;
 
             _model.Save(this.FilePath);
+        }
+
+        private void ConstructMapCellsCollection()
+        {
+            // Construct the MapCellViewModel collection from the underlying model's MapTiles
+            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
+
+            _mapCells = new ObservableCollection<MapCellViewModel>();
+            for (int row = 0; row < _model.MapTiles.Length; row++)
+            {
+                int[] rowData = _model.MapTiles[row];
+                for (int col = 0; col < rowData.Length; col++)
+                {
+                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : ColorArgb.LightGray();
+
+                    _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resizes the map to the specified dimensions. Any new cells created will be initialized to 0 (Floor).
+        /// Any existing cells that fall outside the new dimensions will be discarded.
+        /// </summary>
+        public void ResizeMap(int newWidth, int newHeight)
+        {
+            int[][] newMapTiles = new int[newHeight][];
+
+            for (int row = 0; row < newHeight; row++)
+            {
+                newMapTiles[row] = new int[newWidth];
+
+                for (int col = 0; col < newWidth; col++)
+                {
+                    // If there is existing data for this cell, copy it over, otherwise set to 0 (Floor)
+                    if (row < _model.MapTiles.Length && col < _model.MapTiles[row].Length)
+                        newMapTiles[row][col] = _model.MapTiles[row][col];
+                    else
+                        newMapTiles[row][col] = 0;
+                }
+            }
+
+            _model.MapTiles = newMapTiles;
+
+            ConstructMapCellsCollection();
+            OnPropertyChanged(nameof(MapWidth));
+            OnPropertyChanged(nameof(MapHeight));
+            OnPropertyChanged(nameof(MapSize));
+            OnPropertyChanged(nameof(MapCells));
+
+            IsDirty = true;
         }
         #endregion
     }

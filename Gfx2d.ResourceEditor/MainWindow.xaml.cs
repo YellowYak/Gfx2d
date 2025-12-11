@@ -31,7 +31,8 @@ namespace Gfx2d.ResourceEditor
             CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, HandleCommandSaveAs));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, HandleCommandClose));
 
-            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.AddResource, ExecuteAddResource));
+            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.AddResource, HandleAddResource));
+            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.ResizeMap, HandleResizeMap));
         }
 
         void HandleCommandNew(object sender, ExecutedRoutedEventArgs e)
@@ -127,7 +128,7 @@ namespace Gfx2d.ResourceEditor
             ) == MessageBoxResult.Yes;
         }
 
-        private void ExecuteAddResource(object sender, ExecutedRoutedEventArgs e)
+        private void HandleAddResource(object sender, ExecutedRoutedEventArgs e)
         {
             // Have the user select the resource JSON file
             var dlg = new Microsoft.Win32.OpenFileDialog
@@ -154,6 +155,24 @@ namespace Gfx2d.ResourceEditor
                         button: MessageBoxButton.OK,
                         icon: MessageBoxImage.Error
                     );
+                }
+            }
+        }
+
+        private void HandleResizeMap(object sender, ExecutedRoutedEventArgs e)
+        {
+            // Have the user select the resource JSON file
+            var dialog = new ResizeMapInputDialog(mapWidth: ViewModel.MapWidth, mapHeight: ViewModel.MapHeight);
+            dialog.Owner = this;
+
+            if (dialog.ShowDialog() == true)
+            {
+                int newMapWidth = dialog.MapWidth;
+                int newMapHeight = dialog.MapHeight;
+
+                if (newMapWidth != ViewModel.MapWidth || newMapHeight != ViewModel.MapHeight)
+                {
+                    ViewModel.ResizeMap(newMapWidth, newMapHeight);
                 }
             }
         }
