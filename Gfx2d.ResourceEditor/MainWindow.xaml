@@ -131,7 +131,8 @@
                           Margin="10,0,0,0">
                 <ItemsControl ItemsSource="{Binding MapCells}"
                               HorizontalAlignment="Left"
-                              VerticalAlignment="Top">
+                              VerticalAlignment="Top"
+                              xmlns:behaviors="clr-namespace:Gfx2d.ResourceEditor.Behaviors">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid
@@ -147,7 +148,9 @@
                                     BorderThickness="1"
                                     Background="{Binding CellBrush}"
                                     Width="50"
-                                    Height="50">
+                                    Height="50"
+                                    behaviors:MapCellPaintBehavior.PaintCommand="{Binding DataContext.PaintCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    behaviors:MapCellPaintBehavior.EraseCellCommand="{Binding DataContext.EraseCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
                                 <TextBlock Text="{Binding Value}"
                                    Foreground="{Binding TextColor}"
                                    HorizontalAlignment="Center"

@@ -190,6 +190,58 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 OnPropertyChanged(nameof(MapCells));
             }
         }
+
+        /// <summary>
+        /// This command fires when the user clicks the left mouse button over a cell in the map editor,
+        /// or has the left button pressed when mousing over a cell in the map editor.
+        /// </summary>
+        public ICommand PaintCellCommand => new RelayCommand<MapCellViewModel>(PaintCell);
+        private void PaintCell(MapCellViewModel cell)
+        {
+            if (cell == null) return;
+
+            // If a resource reference is currently selected then use its Id, otherwise use 0 (Floor)
+            int newValue = SelectedResourceReference?.Id ?? 0;
+
+            if (cell.Value == newValue)
+                return;
+
+            // If we reach here the user has just changed a cell in the map
+            // Update the underlying model
+            _model.MapTiles[cell.Row][cell.Column] = newValue;
+
+            // Get the resource data for the new value
+            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
+            ColorArgb newColor = resourceData.ContainsKey(newValue)
+                ? resourceData[newValue].NorthColor
+                : ColorArgb.LightGray();
+
+            // Update the cell view model
+            cell.Value = newValue;
+            cell.CellBrush = newColor.ToBrush();
+
+            IsDirty = true;
+        }
+
+        /// <summary>
+        /// This command fires when the user clicks the right mouse button over a cell in the map editor,
+        /// or has the right button pressed when mousing over a cell in the map editor.
+        /// </summary>
+        public ICommand EraseCellCommand => new RelayCommand<MapCellViewModel>(EraseCell);
+        private void EraseCell(MapCellViewModel cell)
+        {
+            if (cell == null || cell.Value == 0)
+                return;
+
+            // Update the underlying model
+            _model.MapTiles[cell.Row][cell.Column] = 0;
+
+            // Update the cell view model with the default "empty" color
+            cell.Value = 0;
+            cell.CellBrush = ColorArgb.LightGray().ToBrush();
+
+            IsDirty = true;
+        }
         #endregion
 
         #region Resource References
