@@ -14,5 +14,17 @@ namespace Gfx2d.ResourceEditor.Extensions
         /// Generates a System.Windows.Media.Brush from a ColorArgb instance.
         /// </summary>
         public static Brush ToBrush(this ColorArgb argb) => new SolidColorBrush(Color.FromArgb(argb.A, argb.R, argb.G, argb.B));
+
+        /// <summary>
+        /// Generates a System.Windows.Media.Brush from a color byte array.
+        /// Specifically, the color byte array needs exactly four entries in ARGB order.
+        /// </summary>
+        public static Brush ToBrush(this byte[] argbByteArray)
+        {
+            if (argbByteArray == null) throw new ArgumentNullException(nameof(argbByteArray));
+            if (argbByteArray.Length != 4) throw new ArgumentOutOfRangeException(nameof(argbByteArray));
+
+            return new SolidColorBrush(Color.FromArgb(argbByteArray[0], argbByteArray[1], argbByteArray[2], argbByteArray[3]));
+        }
     }
 }

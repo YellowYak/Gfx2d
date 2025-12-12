@@ -92,6 +92,17 @@ namespace Gfx2d.ResourceEditor.ViewModels
                     else if (pp > MapHeight)
                         result = $"Player Position Y must be less than or equal to {MapHeight}.";
                 }
+                else if (columnName == nameof(CameraDirectionAngleText))
+                {
+                    if (string.IsNullOrWhiteSpace(CameraDirectionAngleText))
+                        result = "Player Position Angle is required.";
+                    else if (!double.TryParse(CameraDirectionAngleText, out double pp))
+                        result = "Player Position Angle must be a valid number.";
+                    else if (pp < 0)
+                        result = "Player Position Angle must be greater than 0.";
+                    else if (pp > 6.28)
+                        result = $"Player Position Y must be less than or equal to 6.28.";
+                }
 
                 return result;
             }
@@ -102,7 +113,8 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 string.IsNullOrEmpty(this[nameof(TileWidthText)]) &&
                 string.IsNullOrEmpty(this[nameof(WallHeightText)]) &&
                 string.IsNullOrEmpty(this[nameof(PlayerPosXText)]) &&
-                string.IsNullOrEmpty(this[nameof(PlayerPosYText)]);
+                string.IsNullOrEmpty(this[nameof(PlayerPosYText)]) &&
+                string.IsNullOrEmpty(this[nameof(CameraDirectionAngleText)]);
         #endregion
 
         #region IsDirty
@@ -288,6 +300,9 @@ namespace Gfx2d.ResourceEditor.ViewModels
                     _model.FloorColor = value.ToByteArray();
                     IsDirty = true;
                     OnPropertyChanged(nameof(FloorColor));
+                    
+                    ConstructMapCellsCollection();            
+                    OnPropertyChanged(nameof(MapCells));
                 }
             }
         }
@@ -359,6 +374,44 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 }
             }
         }
+
+        private string? _cameraDirectionAngleText;
+        public string CameraDirectionAngleText
+        {
+            get => _cameraDirectionAngleText ?? CameraDirectionAngle.ToString();
+            set
+            {
+                _cameraDirectionAngleText = value;
+                OnPropertyChanged(nameof(CameraDirectionAngleText));
+
+                // Only update the actual double if valid
+                if (double.TryParse(value, out double result))
+                {
+                    CameraDirectionAngle = result;
+                }
+            }
+        }
+
+        public double CameraDirectionAngle
+        {
+            get => _model.StartingPosition.CameraAngleRads;
+            set
+            {
+                if (_model.StartingPosition.CameraAngleRads != value)
+                {
+                    _model.StartingPosition.CameraAngleRads = value;
+                    IsDirty = true;
+                    OnPropertyChanged(nameof(CameraDirectionAngle));
+                    OnPropertyChanged(nameof(CameraDirectionAngleDegrees));
+                    OnPropertyChanged(nameof(CameraDirectionAngleText));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the Camera Direction Angle in degrees.
+        /// </summary>
+        public double CameraDirectionAngleDegrees => CameraDirectionAngle * (180 / Math.PI);
 
         public ICommand UpdatePlayerPositionCommand => new RelayCommand<Point>(UpdatePlayerPosition);
         private void UpdatePlayerPosition(Point gridPosition)
@@ -453,7 +506,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
 
             // Update the cell view model with the default "empty" color
             cell.Value = 0;
-            cell.CellBrush = ColorArgb.LightGray().ToBrush();
+            cell.CellBrush = _model.FloorColor.ToBrush();
 
             IsDirty = true;
         }
@@ -593,7 +646,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 int[] rowData = _model.MapTiles[row];
                 for (int col = 0; col < rowData.Length; col++)
                 {
-                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : ColorArgb.LightGray();
+                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : new ColorArgb(_model.FloorColor);
 
                     _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
                 }

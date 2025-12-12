@@ -54,13 +54,22 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Player Pos:" Width="75"/>
-                    <Label>X:</Label>
-                    <TextBox Width="75"
-                             Text="{Binding PlayerPosXText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                    <Label>, Y:</Label>
-                    <TextBox Width="75"
-                             Text="{Binding PlayerPosYText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                    <Label Content="Player Pos:" Width="75" VerticalAlignment="Top"/>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                            <Label>X:</Label>
+                            <TextBox Width="75"
+                                     Text="{Binding PlayerPosXText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                            <Label>, Y:</Label>
+                            <TextBox Width="75"
+                                     Text="{Binding PlayerPosYText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Angle (rads):</Label>
+                            <TextBox Width="75"
+                                     Text="{Binding CameraDirectionAngleText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -195,21 +204,40 @@
                             Height="{Binding MapPixelHeight}"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top">
-                        <Ellipse Width="15" 
-                                 Height="15"
-                                 Fill="Red"
-                                 Stroke="White"
-                                 StrokeThickness="2"
-                                 Canvas.Left="{Binding PlayerCircleLeft}"
-                                 Canvas.Top="{Binding PlayerCircleTop}"
-                                 behaviors:DraggableBehavior.IsDraggable="True"
-                                 behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
-                                 behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
-                            <Ellipse.RenderTransform>
-                                <!-- Move the ellipse over so that the Left & Top define the center of the ellipse (rather than the upper-right corner) -->
-                                <TranslateTransform X="-7.5" Y="-7.5"/>
-                            </Ellipse.RenderTransform>
-                        </Ellipse>
+
+                        <!-- Group the circle and arrow together -->
+                        <Grid Canvas.Left="{Binding PlayerCircleLeft}"
+                              Canvas.Top="{Binding PlayerCircleTop}"
+                              Width="15"
+                              Height="15"
+                              behaviors:DraggableBehavior.IsDraggable="True"
+                              behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
+                              behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
+
+                            <Grid.RenderTransform>
+                                <TransformGroup>
+                                    <!-- Center the entire group -->
+                                    <TranslateTransform X="-7.5" Y="-7.5"/>
+                                    
+                                    <!-- Rotate based on player direction (0° = facing up/north) -->
+                                    <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
+                                                     CenterX="7.5"
+                                                     CenterY="7.5"/>
+                                </TransformGroup>
+                            </Grid.RenderTransform>
+
+                            <!-- The circle -->
+                            <Ellipse Width="15"
+                                     Height="15"
+                                     Fill="Red"
+                                     Stroke="White"
+                                     StrokeThickness="2"/>
+                            <!-- The directional arrow pointing right (will be rotated) -->
+                            <Polygon Points="3,7.5 7.5,3 12,7.5 3,7.5"
+                                     Fill="Yellow"
+                                     Stroke="White"
+                                     StrokeThickness="1"/>
+                        </Grid>
                     </Canvas>
                 </Grid>
             </ScrollViewer>

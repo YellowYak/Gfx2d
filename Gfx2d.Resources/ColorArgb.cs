@@ -18,6 +18,17 @@
             B = b;
         }
 
+        public ColorArgb(byte[] argbByteArray)
+        {
+            if (argbByteArray == null) throw new ArgumentNullException(nameof(argbByteArray));
+            if (argbByteArray.Length != 4) throw new ArgumentOutOfRangeException(nameof(argbByteArray));
+
+            A = argbByteArray[0];
+            R = argbByteArray[1];
+            G = argbByteArray[2];
+            B = argbByteArray[3];
+        }
+
         /// <summary>
         /// Returns a new ColorArgb object that has had a shading level applied to the color.
         /// </summary>
