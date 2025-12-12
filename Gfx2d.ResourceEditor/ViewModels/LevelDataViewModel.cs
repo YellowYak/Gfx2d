@@ -70,6 +70,28 @@ namespace Gfx2d.ResourceEditor.ViewModels
                     else if (wh <= 0)
                         result = "Wall Height must be greater than 0.";
                 }
+                else if (columnName == nameof(PlayerPosXText))
+                {
+                    if (string.IsNullOrWhiteSpace(PlayerPosXText))
+                        result = "Player Position X is required.";
+                    else if (!double.TryParse(PlayerPosXText, out double pp))
+                        result = "Player Position X must be a valid number.";
+                    else if (pp < 0)
+                        result = "Player Position X must be greater than 0.";
+                    else if (pp > MapWidth)
+                        result = $"Player Position X must be less than or equal to {MapWidth}.";
+                }
+                else if (columnName == nameof(PlayerPosYText))
+                {
+                    if (string.IsNullOrWhiteSpace(PlayerPosYText))
+                        result = "Player Position Y is required.";
+                    else if (!double.TryParse(PlayerPosYText, out double pp))
+                        result = "Player Position Y must be a valid number.";
+                    else if (pp < 0)
+                        result = "Player Position Y must be greater than 0.";
+                    else if (pp > MapHeight)
+                        result = $"Player Position Y must be less than or equal to {MapHeight}.";
+                }
 
                 return result;
             }
@@ -78,7 +100,9 @@ namespace Gfx2d.ResourceEditor.ViewModels
         public bool IsValid =>
                 string.IsNullOrEmpty(this[nameof(Name)]) &&
                 string.IsNullOrEmpty(this[nameof(TileWidthText)]) &&
-                string.IsNullOrEmpty(this[nameof(WallHeightText)]);
+                string.IsNullOrEmpty(this[nameof(WallHeightText)]) &&
+                string.IsNullOrEmpty(this[nameof(PlayerPosXText)]) &&
+                string.IsNullOrEmpty(this[nameof(PlayerPosYText)]);
         #endregion
 
         #region IsDirty
@@ -269,6 +293,91 @@ namespace Gfx2d.ResourceEditor.ViewModels
         }
         #endregion
 
+        #region Player Position
+        private string? _playerPosXText;
+        public string PlayerPosXText
+        {
+            get => _playerPosXText ?? PlayerPosX.ToString();
+            set
+            {
+                _playerPosXText = value;
+                OnPropertyChanged(nameof(PlayerPosXText));
+
+                // Only update the actual double if valid
+                if (double.TryParse(value, out double result))
+                {
+                    PlayerPosX = result;
+                }
+            }
+        }
+
+        public double PlayerPosX
+        {
+            get => _model.StartingPosition.PlayerPos.X;
+            set
+            {
+                if (_model.StartingPosition.PlayerPos.X != value)
+                {
+                    _model.StartingPosition.PlayerPos.X = value;
+                    IsDirty = true;
+                    OnPropertyChanged(nameof(PlayerPosX));
+                    OnPropertyChanged(nameof(PlayerPosXText));
+                    OnPropertyChanged(nameof(PlayerCircleLeft));
+                }
+            }
+        }
+
+        private string? _playerPosYText;
+        public string PlayerPosYText
+        {
+            get => _playerPosYText ?? PlayerPosY.ToString();
+            set
+            {
+                _playerPosYText = value;
+                OnPropertyChanged(nameof(PlayerPosYText));
+
+                // Only update the actual double if valid
+                if (double.TryParse(value, out double result))
+                {
+                    PlayerPosY = result;
+                }
+            }
+        }
+
+        public double PlayerPosY
+        {
+            get => _model.StartingPosition.PlayerPos.Y;
+            set
+            {
+                if (_model.StartingPosition.PlayerPos.Y != value)
+                {
+                    _model.StartingPosition.PlayerPos.Y = value;
+                    IsDirty = true;
+                    OnPropertyChanged(nameof(PlayerPosY));
+                    OnPropertyChanged(nameof(PlayerPosYText));
+                    OnPropertyChanged(nameof(PlayerCircleTop));
+                }
+            }
+        }
+
+        public ICommand UpdatePlayerPositionCommand => new RelayCommand<Point>(UpdatePlayerPosition);
+        private void UpdatePlayerPosition(Point gridPosition)
+        {
+            // Update the player position properties
+            // This will automatically update the UI through data binding
+            PlayerPosX = Math.Round(gridPosition.X, 2);
+            PlayerPosY = Math.Round(gridPosition.Y, 2);
+
+            // Also update the text fields
+            _playerPosXText = null;
+            _playerPosYText = null;
+            OnPropertyChanged(nameof(PlayerPosXText));
+            OnPropertyChanged(nameof(PlayerPosYText));
+
+            IsDirty = true;
+        }
+        #endregion
+
         #region Map Size
         public int MapWidth => _model.MapTiles.Max(tr => tr.Length);
         public int MapHeight => _model.MapTiles.Length;
@@ -277,6 +386,15 @@ namespace Gfx2d.ResourceEditor.ViewModels
         #endregion
 
         #region Map Cells
+        public double GridCellWidth => 50;
+        public double MapPixelWidth => MapWidth * GridCellWidth;
+        public double GridCellHeight => 50;
+        public double MapPixelHeight => MapHeight * GridCellHeight;
+
+        public double PlayerCircleLeft => PlayerPosX * GridCellWidth;
+        public double PlayerCircleTop => PlayerPosY * GridCellHeight;
+
+
         private ObservableCollection<MapCellViewModel> _mapCells = new();
         public ObservableCollection<MapCellViewModel> MapCells
         {

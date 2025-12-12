@@ -8,7 +8,7 @@ namespace Gfx2d.Resources
         /// The player's starting point on the map.
         /// </summary>
         [JsonProperty("playerPos", Required = Required.Always)]
-        public Point2d PlayerPos { get; set; } = new(0, 0);
+        public Point2d PlayerPos { get; set; } = new(1, 1);
         
         /// <summary>
         /// The direction the camera is facing in radians.

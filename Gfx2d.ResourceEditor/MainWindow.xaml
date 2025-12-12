@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gfx2d.ResourceEditor"
+        xmlns:behaviors="clr-namespace:Gfx2d.ResourceEditor.Behaviors"
         xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
@@ -50,6 +51,16 @@
                              Height="100"
                              Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Label Content="Player Pos:" Width="75"/>
+                    <Label>X:</Label>
+                    <TextBox Width="75"
+                             Text="{Binding PlayerPosXText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                    <Label>, Y:</Label>
+                    <TextBox Width="75"
+                             Text="{Binding PlayerPosYText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -146,26 +157,26 @@
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto"
                           Margin="10,0,0,0">
-                <ItemsControl ItemsSource="{Binding MapCells}"
+                <Grid>
+                    <ItemsControl ItemsSource="{Binding MapCells}"
                               HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              xmlns:behaviors="clr-namespace:Gfx2d.ResourceEditor.Behaviors">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid
+                              VerticalAlignment="Top">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid
                                 Rows="{Binding MapHeight}"
                                 Columns="{Binding MapWidth}"
                             />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="Gray"
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="Gray"
                                     BorderThickness="1"
                                     Background="{Binding CellBrush}"
-                                    Width="50"
-                                    Height="50"
+                                    Width="{Binding DataContext.GridCellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    Height="{Binding DataContext.GridCellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     behaviors:MapCellPaintBehavior.PaintCommand="{Binding DataContext.PaintCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     behaviors:MapCellPaintBehavior.EraseCellCommand="{Binding DataContext.EraseCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
                                 <TextBlock Text="{Binding Value}"
@@ -173,14 +184,36 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    FontSize="10"/>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Overlay canvas for positioning elements at arbitrary coordinates -->
+                    <Canvas x:Name="MapOverlay"
+                            Width="{Binding MapPixelWidth}"
+                            Height="{Binding MapPixelHeight}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <Ellipse Width="15" 
+                                 Height="15"
+                                 Fill="Red"
+                                 Stroke="White"
+                                 StrokeThickness="2"
+                                 Canvas.Left="{Binding PlayerCircleLeft}"
+                                 Canvas.Top="{Binding PlayerCircleTop}"
+                                 behaviors:DraggableBehavior.IsDraggable="True"
+                                 behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
+                                 behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
+                            <Ellipse.RenderTransform>
+                                <!-- Move the ellipse over so that the Left & Top define the center of the ellipse (rather than the upper-right corner) -->
+                                <TranslateTransform X="-7.5" Y="-7.5"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Canvas>
+                </Grid>
             </ScrollViewer>
-
         </Grid>
-
     </Grid>
 
     <Window.InputBindings>
