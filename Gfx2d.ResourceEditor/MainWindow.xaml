@@ -216,13 +216,13 @@
 
                             <Grid.RenderTransform>
                                 <TransformGroup>
-                                    <!-- Center the entire group -->
-                                    <TranslateTransform X="-7.5" Y="-7.5"/>
-                                    
                                     <!-- Rotate based on player direction (0° = facing up/north) -->
                                     <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
                                                      CenterX="7.5"
                                                      CenterY="7.5"/>
+                                    
+                                    <!-- Center the entire group -->
+                                    <TranslateTransform X="-7.5" Y="-7.5"/>
                                 </TransformGroup>
                             </Grid.RenderTransform>
 
