@@ -22,6 +22,11 @@ namespace Gfx2d.Engine
     internal class GameState
     {
         /// <summary>
+        /// A reference to the game host.
+        /// </summary>
+        private IGameHost? host;
+
+        /// <summary>
         /// A reference to the MathHelpers library.
         /// </summary>
         public MathHelpers MathHelpers { get; private set; }
@@ -201,10 +206,11 @@ namespace Gfx2d.Engine
 
 
         /// <summary>
-        /// Initializes the SDL Window, Renderer, and Texture, as well as other game state.
+        /// Initializes the SDL video system, the Window, the Renderer, and Texture, as well as other game state.
         /// </summary>
-        public void Initialize()
+        public void Initialize(IGameHost gameHost)
         {
+            this.host = gameHost;
             this.Running = true;
             this.CameraWidth = 1.5;
 
@@ -213,19 +219,18 @@ namespace Gfx2d.Engine
             if (initSuccess != 0)
                 throw new Exception($"There was an issue initializing SDL. {SDL.SDL_GetError()}");
 
-            // Create a window with the specified width & height.
-            // Note that we initially HIDE the window. This is to prevent the flash of a small window being drawn only to then, a few seconds later, be replaced by a full screen window.
-            this.Window = SDL.SDL_CreateWindow(
-                title: "Gfx",
-                x: SDL.SDL_WINDOWPOS_CENTERED,
-                y: SDL.SDL_WINDOWPOS_CENTERED,
-                w: this.ScreenWidth,
-                h: this.ScreenHeight,
-                flags: SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN
-            );
-
-            if (this.Window == IntPtr.Zero)
-                throw new Exception($"There was an issue creating the window. {SDL.SDL_GetError()}");
+            // If the game host provides a native window handle (and not an SDL window), then create an SDL window from that handle.
+            if (gameHost.IsNativeWindowHandle)
+            {
+                this.Window = SDL.SDL_CreateWindowFrom(gameHost.GetWindowHandle());
+                if (this.Window == IntPtr.Zero)
+                    throw new Exception($"There was an issue creating SDL window from handle. {SDL.SDL_GetError()}");
+            }
+            else
+            {
+                // Otherwise, if the game host provides the actual SDL window, then just use that.
+                this.Window = gameHost.GetWindowHandle();
+            }
 
             // Set full screen mode, if needed
             if (this.Fullscreen)
@@ -346,6 +351,28 @@ namespace Gfx2d.Engine
 
             for (int x = sx; x <= ex; x++)
                 this.FillColumn(x, y1, y2, c);
+        }
+
+        /// <summary>
+        /// Fills the entirety of the screen with a given <see cref="ColorArgb"/> color.
+        /// </summary>
+        public void FillScreen(ColorArgb c)
+        {
+            for (int x = 0; x < this.ScreenWidth; x++)
+                this.FillColumn(x, 0, this.ScreenHeight - 1, c);
+        }
+
+        /// <summary>
+        /// Clean up the SDL resources created by this game state, if any.
+        /// </summary>
+        public void Cleanup()
+        {
+            // Only destroy the window if we created it
+            if (host != null && host.IsNativeWindowHandle && Window != IntPtr.Zero)
+            {
+                SDL.SDL_DestroyWindow(Window);
+                Window = IntPtr.Zero;
+            }
         }
     }
 }

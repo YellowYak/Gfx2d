@@ -17,5 +17,12 @@ namespace Gfx2d.ResourceEditor.Commands
                 name: "ResizeMap",
                 ownerType: typeof(ResourceEditorCommands)
             );
+
+        public static readonly RoutedUICommand LaunchLevel =
+            new RoutedUICommand(
+                text: "Launch Level",
+                name: "LaunchLevel",
+                ownerType: typeof(ResourceEditorCommands)
+            );
     }
 }

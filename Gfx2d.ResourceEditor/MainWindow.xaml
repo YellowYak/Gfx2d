@@ -8,7 +8,11 @@
         xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="1000" Width="1200" Closing="winMainWindow_Closing">
+        Title="{Binding WindowTitle}"
+        Width="1700" Height="850" 
+        Closing="winMainWindow_Closing"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        PreviewKeyUp="Window_PreviewKeyUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,6 +29,10 @@
                 <Separator/>
                 <MenuItem x:Name="mnuMain_File_Exit" Header="E_xit" Command="ApplicationCommands.Close" InputGestureText="Alt+F4" />
             </MenuItem>
+            <MenuItem x:Name="mnuMain_Level" Header="_Level">
+                <MenuItem x:Name="mnuMain_Level_ResizeMap" Header="Resi_ze Map..." Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}" InputGestureText="Ctrl+R"/>
+                <MenuItem x:Name="mnuMain_Level_SaveAndLaunchLevel" Header="Save &amp; P_review Level" Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}" InputGestureText="F5"/>
+            </MenuItem>
         </Menu>
 
         <!-- Main content -->
@@ -37,114 +45,124 @@
             <!-- ========================= -->
             <!-- LEFT SIDE: FORM CONTROLS -->
             <!-- ========================= -->
-            <StackPanel Grid.Column="0" VerticalAlignment="Top">
-
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Name:" Width="75"/>
-                    <TextBox Width="200"
+            <ScrollViewer
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                    <Button Content="Save &amp; Preview Level"
+                            FontSize="14"
+                            Width="200"
+                            Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"
+                            Margin="0,5,0,20"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Name:" Width="75"/>
+                        <TextBox Width="200"
                              Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Description:" Width="75"/>
-                    <TextBox Width="200"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Description:" Width="75"/>
+                        <TextBox Width="200"
                              Height="100"
                              Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Player Pos:" Width="75" VerticalAlignment="Top"/>
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                            <Label>X:</Label>
-                            <TextBox Width="75"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Player Pos:" Width="75" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                <Label>X:</Label>
+                                <TextBox Width="75"
                                      Text="{Binding PlayerPosXText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                            <Label>, Y:</Label>
-                            <TextBox Width="75"
+                                <Label>, Y:</Label>
+                                <TextBox Width="75"
                                      Text="{Binding PlayerPosYText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label>Angle (rads):</Label>
-                            <TextBox Width="75"
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Angle (rads):</Label>
+                                <TextBox Width="75"
                                      Text="{Binding CameraDirectionAngleText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Tile Size:" Width="75"/>
-                    <TextBox Width="200"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Tile Size:" Width="75"/>
+                        <TextBox Width="200"
                              Text="{Binding TileWidthText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Wall Height:" Width="75"/>
-                    <TextBox Width="200"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Wall Height:" Width="75"/>
+                        <TextBox Width="200"
                              Text="{Binding WallHeightText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Ceiling Clr:" Width="75"/>
-                    <xctk:ColorPicker
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Ceiling Clr:" Width="75"/>
+                        <xctk:ColorPicker
                         Width="200"
                         ColorMode="ColorCanvas"
                         SelectedColor="{Binding CeilingColor, Mode=TwoWay}"
                     />
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Floor Clr:" Width="75"/>
-                    <xctk:ColorPicker
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Floor Clr:" Width="75"/>
+                        <xctk:ColorPicker
                         Width="200"
                         ColorMode="ColorCanvas"
                         SelectedColor="{Binding FloorColor, Mode=TwoWay}"
                     />
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Label Content="Map Size:" Width="75"/>
-                    <Label Content="{Binding MapSize}"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="Map Size:" Width="75"/>
+                        <Label Content="{Binding MapSize}"
                            FontWeight="Bold"
                            Margin="0,0,5,0"/>
-                    <Button Content="Resize"
-                            FontSize="8"
-                            Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}"
-                            x:Name="btnResizeMap"
-                            Margin="10,5"/>
-                </StackPanel>
+                        <Button Content="Resize"
+                                FontSize="8"
+                                Padding="8,5"
+                                Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}"
+                                x:Name="btnResizeMap"
+                                ToolTip="Resize the map by entering new map width and height dimensions."
+                                Margin="5"/>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Resources:" Width="75"/>
-                        <Button Content="Add Resource"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Resources:" Width="75"/>
+                            <Button Content="Add Resource"
                                 Command="{x:Static cmd:ResourceEditorCommands.AddResource}"
                                 ToolTip="Add a new resource to this level."
                                 FontSize="8"
                                 Margin="10,5"/>
-                        <Button Content="Unselect"
+                            <Button Content="Unselect"
                                 Command="{Binding UnselectResourceReferenceCommand}"
                                 CommandParameter="{Binding SelectedResourceReference}"
                                 ToolTip="Unselects the map resource. Once unselected, drawing on the map will put place floors."
                                 FontSize="8"
                                 Margin="10,5"/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <ListBox ItemsSource="{Binding ResourceReferences}"
+                        <ListBox ItemsSource="{Binding ResourceReferences}"
                              SelectedItem="{Binding SelectedResourceReference, Mode=TwoWay}"
                              BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding DisplayName}"
+                                        <TextBlock Text="{Binding DisplayName}"
                                                VerticalAlignment="Center"/>
 
-                                    <Button Grid.Column="1"
+                                        <Button Grid.Column="1"
                                             Content="🗑"
                                             Margin="8,0,0,0"
                                             Width="22"
@@ -152,95 +170,128 @@
                                             Focusable="False"
                                             Command="{Binding DataContext.RemoveResourceCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </ScrollViewer>
 
             <!-- ================================ -->
             <!-- RIGHT SIDE: SCROLLABLE GRID VIEW -->
             <!-- ================================ -->
-            <ScrollViewer Grid.Column="1"
+            <TabControl Grid.Column="1" 
+                        Margin="10,0,0,0"
+                        x:Name="tabControl">
+                <!-- TAB 1: Map Editor -->
+                <TabItem Header="Map Editor">
+                    <ScrollViewer Grid.Column="1"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto"
                           Margin="10,0,0,0">
-                <Grid>
-                    <ItemsControl ItemsSource="{Binding MapCells}"
+                        <Grid>
+                            <ItemsControl ItemsSource="{Binding MapCells}"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid
-                                Rows="{Binding MapHeight}"
-                                Columns="{Binding MapWidth}"
-                            />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid
+                                            Rows="{Binding MapHeight}"
+                                            Columns="{Binding MapWidth}"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="Gray"
-                                    BorderThickness="1"
-                                    Background="{Binding CellBrush}"
-                                    Width="{Binding DataContext.GridCellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    Height="{Binding DataContext.GridCellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    behaviors:MapCellPaintBehavior.PaintCommand="{Binding DataContext.PaintCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    behaviors:MapCellPaintBehavior.EraseCellCommand="{Binding DataContext.EraseCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
-                                <TextBlock Text="{Binding Value}"
-                                   Foreground="{Binding TextColor}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="10"/>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Gray"
+                                                BorderThickness="1"
+                                                Background="{Binding CellBrush}"
+                                                Width="{Binding DataContext.GridCellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                Height="{Binding DataContext.GridCellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                behaviors:MapCellPaintBehavior.PaintCommand="{Binding DataContext.PaintCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                behaviors:MapCellPaintBehavior.EraseCellCommand="{Binding DataContext.EraseCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                            <TextBlock Text="{Binding Value}"
+                                                       Foreground="{Binding TextColor}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="10"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
-                    <!-- Overlay canvas for positioning elements at arbitrary coordinates -->
-                    <Canvas x:Name="MapOverlay"
-                            Width="{Binding MapPixelWidth}"
-                            Height="{Binding MapPixelHeight}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top">
+                            <!-- Overlay canvas for positioning elements at arbitrary coordinates -->
+                            <Canvas x:Name="MapOverlay"
+                                    Width="{Binding MapPixelWidth}"
+                                    Height="{Binding MapPixelHeight}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top">
 
-                        <!-- Group the circle and arrow together -->
-                        <Grid Canvas.Left="{Binding PlayerCircleLeft}"
-                              Canvas.Top="{Binding PlayerCircleTop}"
-                              Width="15"
-                              Height="15"
-                              behaviors:DraggableBehavior.IsDraggable="True"
-                              behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
-                              behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
+                                <!-- Group the circle and arrow together -->
+                                <Grid Canvas.Left="{Binding PlayerCircleLeft}"
+                                      Canvas.Top="{Binding PlayerCircleTop}"
+                                      Width="15"
+                                      Height="15"
+                                      behaviors:DraggableBehavior.IsDraggable="True"
+                                      behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
+                                      behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
 
-                            <Grid.RenderTransform>
-                                <TransformGroup>
-                                    <!-- Rotate based on player direction (0° = facing up/north) -->
-                                    <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
+                                    <Grid.RenderTransform>
+                                        <TransformGroup>
+                                            <!-- Rotate based on player direction (0° = facing up/north) -->
+                                            <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
                                                      CenterX="7.5"
                                                      CenterY="7.5"/>
-                                    
-                                    <!-- Center the entire group -->
-                                    <TranslateTransform X="-7.5" Y="-7.5"/>
-                                </TransformGroup>
-                            </Grid.RenderTransform>
 
-                            <!-- The circle -->
-                            <Ellipse Width="15"
-                                     Height="15"
-                                     Fill="Red"
-                                     Stroke="White"
-                                     StrokeThickness="2"/>
-                            <!-- The directional arrow pointing right (will be rotated) -->
-                            <Polygon Points="3,7.5 7.5,3 12,7.5 3,7.5"
-                                     Fill="Yellow"
-                                     Stroke="White"
-                                     StrokeThickness="1"/>
+                                            <!-- Center the entire group -->
+                                            <TranslateTransform X="-7.5" Y="-7.5"/>
+                                        </TransformGroup>
+                                    </Grid.RenderTransform>
+
+                                    <!-- The circle -->
+                                    <Ellipse Width="15"
+                                             Height="15"
+                                             Fill="Red"
+                                             Stroke="White"
+                                             StrokeThickness="2"/>
+                                    <!-- The directional arrow pointing right (will be rotated) -->
+                                    <Polygon Points="7.5,3 12,7.5 7.5,12 7.5,3"
+                                             Fill="Yellow"
+                                             Stroke="White"
+                                             StrokeThickness="1"/>
+                                </Grid>
+                            </Canvas>
                         </Grid>
-                    </Canvas>
-                </Grid>
-            </ScrollViewer>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- TAB 2: Game Preview -->
+                <TabItem Header="Level Preview" 
+                         x:Name="tabGamePreview">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Border x:Name="gameHostBorder" 
+                                Background="Black"
+                                Width="1287"
+                                Height="720"
+                                ClipToBounds="True"
+                                Visibility="Hidden">
+                                <!-- HwndHost will be added programmatically -->
+                            </Border>
+                            <Button Content="Save &amp; Preview Level"
+                                    Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"
+                                    FontSize="18"
+                                    x:Name="btnLaunchLevelTabButton"
+                                    Padding="20,10"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+
+            </TabControl>
         </Grid>
     </Grid>
 
@@ -251,6 +302,11 @@
         <KeyBinding Key="N"
                 Modifiers="Ctrl"
                 Command="ApplicationCommands.New"/>
+        <KeyBinding Key="F5" 
+                Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"/>
+        <KeyBinding Key="R" 
+                Modifiers="Ctrl"
+                Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}"/>
     </Window.InputBindings>
 
     <Window.Resources>

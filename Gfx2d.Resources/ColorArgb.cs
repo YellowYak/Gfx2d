@@ -52,7 +52,6 @@
         }
 
         public static ColorArgb Black() => new ColorArgb(255, 0, 0, 0);
-        public static ColorArgb White() => new ColorArgb(255, 255, 255, 255);
         public static ColorArgb LightGray() => new ColorArgb(255, 222, 222, 222);
     }
 }
