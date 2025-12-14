@@ -577,6 +577,32 @@ namespace Gfx2d.ResourceEditor.ViewModels
             SelectedResourceReference = null;
         }
 
+        public ICommand FillEdgesWithSelectedResourceReferenceCommand => new RelayCommand<ResourceReference>(
+            FillEdgesWithSelectedResourceReference,
+            rr => rr != null
+        );
+        private void FillEdgesWithSelectedResourceReference(ResourceReference currentlySelectedResourceRef)
+        {
+            foreach (var cell in MapCells)
+                if (cell.Row == 0 || cell.Row == MapHeight - 1 || cell.Column == 0 || cell.Column == MapWidth - 1)
+                {
+                    // Get the resource data for the new value
+                    Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
+                    ColorArgb newColor = resourceData.ContainsKey(currentlySelectedResourceRef.Id)
+                        ? resourceData[currentlySelectedResourceRef.Id].NorthColor
+                        : ColorArgb.LightGray();
+
+                    cell.Value = currentlySelectedResourceRef.Id;
+                    cell.CellBrush = newColor.ToBrush();
+
+                    _model.MapTiles[cell.Row][cell.Column] = currentlySelectedResourceRef.Id;
+                }
+
+            IsDirty = true;
+            
+            OnPropertyChanged(nameof(MapCells));
+        }
+
         public ICommand AddResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddResourceReference);
         private void AddResourceReference(IEnumerable<string> paths)
         {
