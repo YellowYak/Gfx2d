@@ -54,7 +54,7 @@
                             Width="200"
                             Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"
                             Margin="0,5,0,20"/>
-                    
+
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Label Content="Name:" Width="75"/>
                         <TextBox Width="200"
@@ -192,50 +192,56 @@
                         x:Name="tabControl">
                 <!-- TAB 1: Map Editor -->
                 <TabItem Header="Map Editor">
-                    <ScrollViewer Grid.Column="1"
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ScrollViewer Grid.Row="0"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto"
                           Margin="10,0,0,0">
-                        <Grid>
-                            <ItemsControl ItemsSource="{Binding MapCells}"
+                            <Grid>
+                                <ItemsControl ItemsSource="{Binding MapCells}"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid
                                             Rows="{Binding MapHeight}"
                                             Columns="{Binding MapWidth}"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
 
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="Gray"
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="Gray"
                                                 BorderThickness="1"
                                                 Background="{Binding CellBrush}"
                                                 Width="{Binding DataContext.GridCellWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 Height="{Binding DataContext.GridCellHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 behaviors:MapCellPaintBehavior.PaintCommand="{Binding DataContext.PaintCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 behaviors:MapCellPaintBehavior.EraseCellCommand="{Binding DataContext.EraseCellCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
-                                            <TextBlock Text="{Binding Value}"
+                                                <TextBlock Text="{Binding Value}"
                                                        Foreground="{Binding TextColor}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
                                                        FontSize="10"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                            <!-- Overlay canvas for positioning elements at arbitrary coordinates -->
-                            <Canvas x:Name="MapOverlay"
+                                <!-- Overlay canvas for positioning elements at arbitrary coordinates -->
+                                <Canvas x:Name="MapOverlay"
                                     Width="{Binding MapPixelWidth}"
                                     Height="{Binding MapPixelHeight}"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top">
 
-                                <!-- Group the circle and arrow together -->
-                                <Grid Canvas.Left="{Binding PlayerCircleLeft}"
+                                    <!-- Group the circle and arrow together -->
+                                    <Grid Canvas.Left="{Binding PlayerCircleLeft}"
                                       Canvas.Top="{Binding PlayerCircleTop}"
                                       Width="15"
                                       Height="15"
@@ -243,33 +249,61 @@
                                       behaviors:DraggableBehavior.CellSize="{Binding GridCellWidth}"
                                       behaviors:DraggableBehavior.UpdatePositionCommand="{Binding UpdatePlayerPositionCommand}">
 
-                                    <Grid.RenderTransform>
-                                        <TransformGroup>
-                                            <!-- Rotate based on player direction (0° = facing up/north) -->
-                                            <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
+                                        <Grid.RenderTransform>
+                                            <TransformGroup>
+                                                <!-- Rotate based on player direction (0° = facing up/north) -->
+                                                <RotateTransform Angle="{Binding DataContext.CameraDirectionAngleDegrees, RelativeSource={RelativeSource AncestorType=Canvas}}" 
                                                      CenterX="7.5"
                                                      CenterY="7.5"/>
 
-                                            <!-- Center the entire group -->
-                                            <TranslateTransform X="-7.5" Y="-7.5"/>
-                                        </TransformGroup>
-                                    </Grid.RenderTransform>
+                                                <!-- Center the entire group -->
+                                                <TranslateTransform X="-7.5" Y="-7.5"/>
+                                            </TransformGroup>
+                                        </Grid.RenderTransform>
 
-                                    <!-- The circle -->
-                                    <Ellipse Width="15"
+                                        <!-- The circle -->
+                                        <Ellipse Width="15"
                                              Height="15"
                                              Fill="Red"
                                              Stroke="White"
                                              StrokeThickness="2"/>
-                                    <!-- The directional arrow pointing right (will be rotated) -->
-                                    <Polygon Points="7.5,3 12,7.5 7.5,12 7.5,3"
+                                        <!-- The directional arrow pointing right (will be rotated) -->
+                                        <Polygon Points="7.5,3 12,7.5 7.5,12 7.5,3"
                                              Fill="Yellow"
                                              Stroke="White"
                                              StrokeThickness="1"/>
-                                </Grid>
-                            </Canvas>
-                        </Grid>
-                    </ScrollViewer>
+                                    </Grid>
+                                </Canvas>
+                            </Grid>
+                        </ScrollViewer>
+
+                        <Border Grid.Row="1"
+                              Background="#F0F0F0"
+                              BorderBrush="#D0D0D0"
+                              BorderThickness="0,1,0,0"
+                              Padding="8,4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding MapEditorStatusMessage}" 
+                                       VerticalAlignment="Center"/>
+
+                                <StackPanel Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding MapEditorZoomLevelDisplay}" Margin="8,0,4,0"/>
+                                    <Slider Value="{Binding MapEditorZoomLevel}"
+                                            Minimum="50" 
+                                            Maximum="200"
+                                            Width="200"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </TabItem>
 
                 <!-- TAB 2: Game Preview -->

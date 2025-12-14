@@ -439,14 +439,41 @@ namespace Gfx2d.ResourceEditor.ViewModels
         #endregion
 
         #region Map Cells
-        public double GridCellWidth => 50;
+        const double DefaultGridCellWidth = 50;
+        public double GridCellWidth => DefaultGridCellWidth * (MapEditorZoomLevel / 100);
+
+        const double DefaultGridCellHeight = 50;
+        public double GridCellHeight => DefaultGridCellHeight * (MapEditorZoomLevel / 100);
+
         public double MapPixelWidth => MapWidth * GridCellWidth;
-        public double GridCellHeight => 50;
+        
         public double MapPixelHeight => MapHeight * GridCellHeight;
 
         public double PlayerCircleLeft => PlayerPosX * GridCellWidth;
         public double PlayerCircleTop => PlayerPosY * GridCellHeight;
 
+
+        private double _mapEditorZoomLevel = 100;
+        public double MapEditorZoomLevel
+        {
+            get => _mapEditorZoomLevel;
+            set
+            {
+                _mapEditorZoomLevel = value;
+
+                OnPropertyChanged(nameof(MapEditorZoomLevel));
+                OnPropertyChanged(nameof(MapEditorZoomLevelDisplay));
+
+                OnPropertyChanged(nameof(GridCellWidth));
+                OnPropertyChanged(nameof(GridCellHeight));
+                OnPropertyChanged(nameof(MapPixelWidth));
+                OnPropertyChanged(nameof(MapPixelHeight));
+                OnPropertyChanged(nameof(PlayerCircleLeft));
+                OnPropertyChanged(nameof(PlayerCircleTop));
+            }
+        }
+
+        public string MapEditorZoomLevelDisplay => $"Zoom ({MapEditorZoomLevel:N0}%): ";
 
         private ObservableCollection<MapCellViewModel> _mapCells = new();
         public ObservableCollection<MapCellViewModel> MapCells
@@ -456,6 +483,21 @@ namespace Gfx2d.ResourceEditor.ViewModels
             {
                 _mapCells = value;
                 OnPropertyChanged(nameof(MapCells));
+            }
+        }
+
+        /// <summary>
+        /// The status message to display in the map editor status bar.
+        /// Returns the currently selected resource reference, or a default message if none is selected.
+        /// </summary>
+        public string MapEditorStatusMessage
+        {
+            get
+            {
+                if (this.SelectedResourceReference == null)
+                    return "No resource selected. Clicking a cell will set it to 'Floor' (0).";
+                else
+                    return $"Selected resource: '{this.SelectedResourceReference.FileName}' (ID: {this.SelectedResourceReference.Id})";
             }
         }
 
@@ -533,6 +575,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
             {
                 _selectedResourceReference = value;
                 OnPropertyChanged(nameof(SelectedResourceReference));
+                OnPropertyChanged(nameof(MapEditorStatusMessage));
             }
         }
 
