@@ -25,3 +25,16 @@ and passes that instance to the **Gfx2d.Engine** for rendering. It also captures
 ## Gfx2d.ResourceEditor
 
 A WPF application for creating and editing level maps.
+
+## Major TODOs
+
+* Look into improving raycasting logic for determining the position of the raycast in the subsequent map tile. Presently, the logic uses
+  trigonometeric functions to find each tile boundary, which may be inefficient. Could use them once to determine the slope, then just use
+  algebra to find the remaining tile boundaries?
+* Update the engine to support textures for walls.
+* Update the engine to support textures for floors and ceilings.
+* Implement sprite rendering for objects within the scene (enemies, items, etc.).
+* Update **Gfx2d.ResourceEditor** to support editing textures for walls, floors, ceilings, and sprites, and placing sprite starting locations on the map.
+* Look into adding sound support in SDL2. E.g., play a sound when the player bumps into a wall.
+* Update the engine to support drawing text on screen.
+* Decide what in the heck I'm going to use this toy engine for! A FPS-type game? A puzzle-like game? Something else?
