@@ -14,7 +14,7 @@ namespace Gfx2d.LevelEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        LevelDataViewModel ViewModel => (DataContext as LevelDataViewModel)!;
+        LevelEditorViewModel ViewModel => (DataContext as LevelEditorViewModel)!;
 
         private WpfGameHost? gameHost;
         private DispatcherTimer? gameTimer;
@@ -24,7 +24,7 @@ namespace Gfx2d.LevelEditor
         {
             InitializeComponent();
 
-            LoadLevelDataViewModel();
+            LoadLevelEditorViewModel();
 
             InitializeCommands();
         }
@@ -46,7 +46,7 @@ namespace Gfx2d.LevelEditor
         void HandleCommandNew(object sender, ExecutedRoutedEventArgs e)
         {
             if (CanProceedWithUnsavedChanges())
-                LoadLevelDataViewModel();
+                LoadLevelEditorViewModel();
         }
 
         void HandleCommandOpen(object sender, ExecutedRoutedEventArgs e)
@@ -72,7 +72,7 @@ namespace Gfx2d.LevelEditor
                     );
                 else
                 {
-                    LoadLevelDataViewModel(selectedFilePath);
+                    LoadLevelEditorViewModel(selectedFilePath);
                 }
             }
         }
@@ -135,7 +135,7 @@ namespace Gfx2d.LevelEditor
         }
         #endregion
 
-        void LoadLevelDataViewModel(string? path = null)
+        void LoadLevelEditorViewModel(string? path = null)
         {
             LevelData level;
 
@@ -144,7 +144,7 @@ namespace Gfx2d.LevelEditor
             else
                 level = LevelData.LoadFromFile(path);
 
-            DataContext = new LevelDataViewModel(level, path);
+            DataContext = new LevelEditorViewModel(level, path);
         }
 
         /// <summary>

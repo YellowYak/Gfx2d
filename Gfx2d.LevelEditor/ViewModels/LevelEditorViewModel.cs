@@ -10,11 +10,11 @@ using System.Windows.Media;
 
 namespace Gfx2d.LevelEditor.ViewModels
 {
-    public class LevelDataViewModel : INotifyPropertyChanged, IDataErrorInfo
+    public class LevelEditorViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private readonly LevelData _model;
 
-        public LevelDataViewModel(LevelData model, string? path = null)
+        public LevelEditorViewModel(LevelData model, string? path = null)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));
             _filePath = path;
