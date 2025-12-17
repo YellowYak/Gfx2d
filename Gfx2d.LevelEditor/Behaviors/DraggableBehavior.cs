@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Gfx2d.ResourceEditor.Behaviors
+namespace Gfx2d.LevelEditor.Behaviors
 {
     /// <summary>
     /// Attached behavior that makes an element draggable within a Canvas

@@ -1,28 +1,28 @@
 ﻿using System.Windows.Input;
 
-namespace Gfx2d.ResourceEditor.Commands
+namespace Gfx2d.LevelEditor.Commands
 {
-    public static class ResourceEditorCommands
+    public static class LevelEditorCommands
     {
         public static readonly RoutedUICommand AddResource =
             new RoutedUICommand(
                 text: "Add Resource",
                 name: "AddResource",
-                ownerType: typeof(ResourceEditorCommands)
+                ownerType: typeof(LevelEditorCommands)
             );
 
         public static readonly RoutedUICommand ResizeMap =
             new RoutedUICommand(
                 text: "Resize Map",
                 name: "ResizeMap",
-                ownerType: typeof(ResourceEditorCommands)
+                ownerType: typeof(LevelEditorCommands)
             );
 
         public static readonly RoutedUICommand LaunchLevel =
             new RoutedUICommand(
                 text: "Launch Level",
                 name: "LaunchLevel",
-                ownerType: typeof(ResourceEditorCommands)
+                ownerType: typeof(LevelEditorCommands)
             );
     }
 }

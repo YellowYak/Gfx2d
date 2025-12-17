@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace Gfx2d.ResourceEditor.Commands
+namespace Gfx2d.LevelEditor.Commands
 {
     /// <summary>
     /// Generic-based version of RelayCommand.

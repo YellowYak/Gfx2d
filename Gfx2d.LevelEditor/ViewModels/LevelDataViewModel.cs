@@ -1,5 +1,5 @@
-﻿using Gfx2d.ResourceEditor.Commands;
-using Gfx2d.ResourceEditor.Extensions;
+﻿using Gfx2d.LevelEditor.Commands;
+using Gfx2d.LevelEditor.Extensions;
 using Gfx2d.Resources;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Gfx2d.ResourceEditor.ViewModels
+namespace Gfx2d.LevelEditor.ViewModels
 {
     public class LevelDataViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
@@ -165,7 +165,7 @@ namespace Gfx2d.ResourceEditor.ViewModels
                 else
                     fileNameDisplay = System.IO.Path.GetFileNameWithoutExtension(this.FilePath);
 
-                return $"Resource Editor - {fileNameDisplay} ({MapSize})";
+                return $"Level Editor - {fileNameDisplay} ({MapSize})";
             }
         }
         #endregion

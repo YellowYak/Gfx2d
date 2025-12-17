@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Gfx2d.ResourceEditor
+namespace Gfx2d.LevelEditor
 {
     public partial class ResizeMapInputDialog : Window
     {

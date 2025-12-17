@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
-namespace Gfx2d.ResourceEditor
+namespace Gfx2d.LevelEditor
 {
     public class SdlHost : HwndHost
     {

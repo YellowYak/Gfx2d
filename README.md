@@ -15,14 +15,14 @@ the **Gfx2d.Engine**. The engine draws the scene to the providded window and upd
 ## Gfx2d.Resources
 
 A Class Library project that contains classes used for loading and managing level data. This is in a separate project because it is
-used both the engin (**Gfx2d.Engine**) and the resource editor (**Gfx2d.ResourceEditor**).
+used both the engine (**Gfx2d.Engine**) and the level editor (**Gfx2d.LevelEditor**).
 
 ## Gfx2d.Standalone
 
 This Windows Application project serves as a standalone executable that hosts the **Gfx2d.Engine** library. It simply creates an SDL2 window
 and passes that instance to the **Gfx2d.Engine** for rendering. It also captures keyboard inputs and forwards them to the engine.
 
-## Gfx2d.ResourceEditor
+## Gfx2d.LevelEditor
 
 A WPF application for creating and editing level maps.
 
@@ -34,7 +34,8 @@ A WPF application for creating and editing level maps.
 * Update the engine to support textures for walls.
 * Update the engine to support textures for floors and ceilings.
 * Implement sprite rendering for objects within the scene (enemies, items, etc.).
-* Update **Gfx2d.ResourceEditor** to support editing textures for walls, floors, ceilings, and sprites, and placing sprite starting locations on the map.
+* Add WPF app to create and edit textures for walls, floors, ceilings, and sprites
+* Update **Gfx2d.LevelEditor** to allow placement of sprite starting locations on the map.
 * Look into adding sound support in SDL2. E.g., play a sound when the player bumps into a wall.
 * Update the engine to support drawing text on screen.
 * Decide what in the heck I'm going to use this toy engine for! A FPS-type game? A puzzle-like game? Something else?

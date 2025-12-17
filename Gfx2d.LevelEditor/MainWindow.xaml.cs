@@ -1,5 +1,5 @@
-﻿using Gfx2d.ResourceEditor.Commands;
-using Gfx2d.ResourceEditor.ViewModels;
+﻿using Gfx2d.LevelEditor.Commands;
+using Gfx2d.LevelEditor.ViewModels;
 using Gfx2d.Resources;
 using SDL2;
 using System.Reflection.Metadata.Ecma335;
@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace Gfx2d.ResourceEditor
+namespace Gfx2d.LevelEditor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -38,9 +38,9 @@ namespace Gfx2d.ResourceEditor
             CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, HandleCommandSaveAs));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, HandleCommandClose));
 
-            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.AddResource, HandleAddResource));
-            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.ResizeMap, HandleResizeMap));
-            CommandBindings.Add(new CommandBinding(ResourceEditorCommands.LaunchLevel, HandleLaunchLevel));
+            CommandBindings.Add(new CommandBinding(LevelEditorCommands.AddResource, HandleAddResource));
+            CommandBindings.Add(new CommandBinding(LevelEditorCommands.ResizeMap, HandleResizeMap));
+            CommandBindings.Add(new CommandBinding(LevelEditorCommands.LaunchLevel, HandleLaunchLevel));
         }
 
         void HandleCommandNew(object sender, ExecutedRoutedEventArgs e)

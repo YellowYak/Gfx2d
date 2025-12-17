@@ -1,4 +1,4 @@
-﻿using Gfx2d.ResourceEditor.Extensions;
+﻿using Gfx2d.LevelEditor.Extensions;
 using Gfx2d.Resources;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

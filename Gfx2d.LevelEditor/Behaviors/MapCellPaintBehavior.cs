@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Gfx2d.ResourceEditor.Behaviors
+namespace Gfx2d.LevelEditor.Behaviors
 {
     /// <summary>
     /// Attached behavior that enables click-and-drag painting on map cells

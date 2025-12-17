@@ -1,7 +1,7 @@
 ﻿using Gfx2d.Resources;
 using System.Windows.Media;
 
-namespace Gfx2d.ResourceEditor.Extensions
+namespace Gfx2d.LevelEditor.Extensions
 {
     internal static class ColorExtensions
     {

@@ -1,11 +1,11 @@
-﻿<Window x:Name="winMainWindow" x:Class="Gfx2d.ResourceEditor.MainWindow"
+﻿<Window x:Name="winMainWindow" x:Class="Gfx2d.LevelEditor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Gfx2d.ResourceEditor"
-        xmlns:behaviors="clr-namespace:Gfx2d.ResourceEditor.Behaviors"
-        xmlns:cmd="clr-namespace:Gfx2d.ResourceEditor.Commands"
+        xmlns:local="clr-namespace:Gfx2d.LevelEditor"
+        xmlns:behaviors="clr-namespace:Gfx2d.LevelEditor.Behaviors"
+        xmlns:cmd="clr-namespace:Gfx2d.LevelEditor.Commands"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
@@ -57,7 +57,7 @@
                 <MenuItem x:Name="mnuMain_File_Exit" Header="E_xit" Command="ApplicationCommands.Close" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem x:Name="mnuMain_Level" Header="_Level">
-                <MenuItem x:Name="mnuMain_Level_ResizeMap" Header="Resi_ze Map..." Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}" InputGestureText="Ctrl+R">
+                <MenuItem x:Name="mnuMain_Level_ResizeMap" Header="Resi_ze Map..." Command="{x:Static cmd:LevelEditorCommands.ResizeMap}" InputGestureText="Ctrl+R">
                     <MenuItem.Icon>
                         <Grid Width="16" Height="16">
                             <Image Source="/Images/resize.png"
@@ -67,7 +67,7 @@
                         </Grid>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="mnuMain_Level_SaveAndLaunchLevel" Header="Save &amp; P_review Level" Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}" InputGestureText="F5">
+                <MenuItem x:Name="mnuMain_Level_SaveAndLaunchLevel" Header="Save &amp; P_review Level" Command="{x:Static cmd:LevelEditorCommands.LaunchLevel}" InputGestureText="F5">
                     <MenuItem.Icon>
                         <Grid Width="16" Height="16">
                             <Image Source="/Images/preview.png"
@@ -97,7 +97,7 @@
                     <Button Content="Save &amp; Preview Level"
                             FontSize="14"
                             Width="200"
-                            Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"
+                            Command="{x:Static cmd:LevelEditorCommands.LaunchLevel}"
                             Margin="0,5,0,20"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -172,7 +172,7 @@
                         <Button Content="Resize"
                                 FontSize="8"
                                 Padding="8,5"
-                                Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}"
+                                Command="{x:Static cmd:LevelEditorCommands.ResizeMap}"
                                 x:Name="btnResizeMap"
                                 ToolTip="Resize the map by entering new map width and height dimensions."
                                 Margin="5"/>
@@ -182,7 +182,7 @@
                         <StackPanel Orientation="Vertical">
                             <Label Content="Resources:" Width="75"/>
                             <Button Content="Add Resource"
-                                Command="{x:Static cmd:ResourceEditorCommands.AddResource}"
+                                Command="{x:Static cmd:LevelEditorCommands.AddResource}"
                                 ToolTip="Add a new resource to this level."
                                 FontSize="8"
                                 Margin="10,5"/>
@@ -367,7 +367,7 @@
                                 <!-- HwndHost will be added programmatically -->
                             </Border>
                             <Button Content="Save &amp; Preview Level"
-                                    Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"
+                                    Command="{x:Static cmd:LevelEditorCommands.LaunchLevel}"
                                     FontSize="18"
                                     x:Name="btnLaunchLevelTabButton"
                                     Padding="20,10"
@@ -389,10 +389,10 @@
                 Modifiers="Ctrl"
                 Command="ApplicationCommands.New"/>
         <KeyBinding Key="F5" 
-                Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}"/>
+                Command="{x:Static cmd:LevelEditorCommands.LaunchLevel}"/>
         <KeyBinding Key="R" 
                 Modifiers="Ctrl"
-                Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}"/>
+                Command="{x:Static cmd:LevelEditorCommands.ResizeMap}"/>
     </Window.InputBindings>
 
     <Window.Resources>

@@ -1,7 +1,7 @@
 ﻿using Gfx2d.Engine;
 using SDL2;
 
-namespace Gfx2d.ResourceEditor
+namespace Gfx2d.LevelEditor
 {
     public class WpfGameHost : IGameHost
     {

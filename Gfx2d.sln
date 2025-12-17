@@ -7,14 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.Engine", "Gfx2d.Engin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.Resources", "Gfx2d.Resources\Gfx2d.Resources.csproj", "{781F6BED-9551-AF78-3EA9-6211CFA1685B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.ResourceEditor", "Gfx2d.ResourceEditor\Gfx2d.ResourceEditor.csproj", "{D8EF1118-E657-4EFE-8E6F-57E383E14007}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.Standalone", "Gfx2d.Standalone\Gfx2d.Standalone.csproj", "{73BFAA8C-1CD8-4FD2-B48F-6DC6BC3B340D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38DDA318-90EC-4A9C-8944-C8844ED08FA9}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gfx2d.LevelEditor", "Gfx2d.LevelEditor\Gfx2d.LevelEditor.csproj", "{39AAD524-FCBB-500D-7287-B557210F4724}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,14 @@ Global
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{781F6BED-9551-AF78-3EA9-6211CFA1685B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8EF1118-E657-4EFE-8E6F-57E383E14007}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73BFAA8C-1CD8-4FD2-B48F-6DC6BC3B340D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73BFAA8C-1CD8-4FD2-B48F-6DC6BC3B340D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73BFAA8C-1CD8-4FD2-B48F-6DC6BC3B340D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73BFAA8C-1CD8-4FD2-B48F-6DC6BC3B340D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39AAD524-FCBB-500D-7287-B557210F4724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AAD524-FCBB-500D-7287-B557210F4724}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AAD524-FCBB-500D-7287-B557210F4724}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AAD524-FCBB-500D-7287-B557210F4724}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
