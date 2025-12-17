@@ -38,3 +38,8 @@ A WPF application for creating and editing level maps.
 * Look into adding sound support in SDL2. E.g., play a sound when the player bumps into a wall.
 * Update the engine to support drawing text on screen.
 * Decide what in the heck I'm going to use this toy engine for! A FPS-type game? A puzzle-like game? Something else?
+
+## Credits & Thanks
+
+* Icons from https://www.iconpacks.net/
+* Ideas & inspiration from Tim Wheeler's blog post, [Wolfenstein 3D Raycasting in C](https://timallanwheeler.com/blog/2023/04/01/wolfenstein-3d-raycasting-in-c/)

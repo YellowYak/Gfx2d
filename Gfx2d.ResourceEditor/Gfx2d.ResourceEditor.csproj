@@ -17,4 +17,12 @@
     <ProjectReference Include="..\Gfx2d.Resources\Gfx2d.Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Images\new.png" />
+    <Resource Include="Images\open.png" />
+    <Resource Include="Images\preview.png" />
+    <Resource Include="Images\resize.png" />
+    <Resource Include="Images\save.png" />
+  </ItemGroup>
+
 </Project>

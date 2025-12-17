@@ -22,16 +22,61 @@
         <!-- Menu Bar -->
         <Menu x:Name="mnuMain" Grid.Row="0">
             <MenuItem x:Name="mnuMain_File" Header="_File">
-                <MenuItem x:Name="mnuMain_File_New" Header="_New" Command="ApplicationCommands.New" InputGestureText="Ctrl+N"/>
-                <MenuItem x:Name="mnuMain_File_Open" Header="_Open File..." Command="ApplicationCommands.Open" />
-                <MenuItem x:Name="mnuMain_File_Save" Header="_Save" Command="ApplicationCommands.Save" />
+                <MenuItem x:Name="mnuMain_File_New" Header="_New" Command="ApplicationCommands.New" InputGestureText="Ctrl+N">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/new.png"
+                                   Width="12" Height="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_File_Open" Header="_Open File..." Command="ApplicationCommands.Open">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/open.png"
+                                   Width="12" Height="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_Level_Save" Header="_Save Level" Command="ApplicationCommands.Save">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/save.png"
+                                   Width="12" Height="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="mnuMain_File_SaveAs" Header="Save As..." Command="ApplicationCommands.SaveAs" />
                 <Separator/>
                 <MenuItem x:Name="mnuMain_File_Exit" Header="E_xit" Command="ApplicationCommands.Close" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem x:Name="mnuMain_Level" Header="_Level">
-                <MenuItem x:Name="mnuMain_Level_ResizeMap" Header="Resi_ze Map..." Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}" InputGestureText="Ctrl+R"/>
-                <MenuItem x:Name="mnuMain_Level_SaveAndLaunchLevel" Header="Save &amp; P_review Level" Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}" InputGestureText="F5"/>
+                <MenuItem x:Name="mnuMain_Level_ResizeMap" Header="Resi_ze Map..." Command="{x:Static cmd:ResourceEditorCommands.ResizeMap}" InputGestureText="Ctrl+R">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/resize.png"
+                                   Width="12" Height="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_Level_SaveAndLaunchLevel" Header="Save &amp; P_review Level" Command="{x:Static cmd:ResourceEditorCommands.LaunchLevel}" InputGestureText="F5">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/preview.png"
+                                   Width="12" Height="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
@@ -83,7 +128,8 @@
                             <StackPanel Orientation="Horizontal">
                                 <Label>Angle (rads):</Label>
                                 <TextBox Width="75"
-                                     Text="{Binding CameraDirectionAngleText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                         Text="{Binding CameraDirectionAngleText, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                         ToolTip="The initial angle the player faces, in radians. A value of 0 is due east; increasing values rotate the angle clockwise."/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
