@@ -429,8 +429,7 @@ namespace Gfx2d.Engine
                 double raycastLength = Point2d.GetLength(state.PlayerPos, raycastHit);
 
                 // Determine shading level based on the raycast length
-                double shading = raycastLength / 20;
-                shading = Math.Clamp(shading, 0, 0.66);
+                int shading = (int)(Math.Clamp(raycastLength / 20, 0, 0.66) * 100);
 
                 // For determining the wall height we want the -perpendicular- distance from the player to the hit wall.
                 // This is the line looking straight out from the player's POV. (Note: a fisheye distortion occurs if the
