@@ -2097,15 +2097,15 @@
   "mapTextures": [
     {
       "id": 1,
-      "fileName": "BlueWall.json"
+      "fileName": "RedBrickWall.json"
     },
     {
       "id": 2,
-      "fileName": "GreenWall.json"
+      "fileName": "BrownBrickWall.json"
     },
     {
       "id": 3,
-      "fileName": "RedWall.json"
+      "fileName": "Door.json"
     }
   ],
   "ceilingColor": [

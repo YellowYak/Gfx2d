@@ -4,10 +4,10 @@ namespace Gfx2d.LevelEditor.Commands
 {
     public static class LevelEditorCommands
     {
-        public static readonly RoutedUICommand AddResource =
+        public static readonly RoutedUICommand AddTextureResource =
             new RoutedUICommand(
-                text: "Add Resource",
-                name: "AddResource",
+                text: "Add Texture Resource",
+                name: "AddTextureResource",
                 ownerType: typeof(LevelEditorCommands)
             );
 

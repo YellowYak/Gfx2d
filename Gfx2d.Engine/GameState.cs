@@ -60,15 +60,11 @@ namespace Gfx2d.Engine
         /// <summary>
         /// The game's screen width at normal scale.
         /// </summary>
-        public int ScreenWidth { get; private set; }
+        public int ScreenWidth;
         /// <summary>
         /// The game's screen height at normal scale.
         /// </summary>
-        public int ScreenHeight { get; private set; }
-        /// <summary>
-        /// A cached value of half the screen's height. This value is used in many calculations.
-        /// </summary>
-        public int ScreenHeightHalved { get; private set; }
+        public int ScreenHeight;
         /// <summary>
         /// The number of bytes per row of data in the pixel array. This number is based on the width of the screen and is needed when blitting the pixel array to the SDL window.
         /// </summary>
@@ -89,7 +85,7 @@ namespace Gfx2d.Engine
         /// <summary>
         /// The distance on the map between the player (<see cref="PlayerPos"/>) and the camera where the scene is rendered.
         /// </summary>
-        public double CameraDistanceFromPlayer { get; set; } = 1;
+        public double CameraDistanceFromPlayer = 1;
 
         private double cameraWidth;
         /// <summary>
@@ -198,7 +194,6 @@ namespace Gfx2d.Engine
 
             this.ScreenWidth = screenWidth;
             this.ScreenHeight = screenHeight;
-            this.ScreenHeightHalved = screenHeight / 2;
             this.BytesPerRowOfPixelData = screenWidth * 4;
 
             this.pixels = new int[screenWidth * screenHeight];

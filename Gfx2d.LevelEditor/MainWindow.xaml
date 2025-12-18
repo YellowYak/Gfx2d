@@ -180,22 +180,22 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <StackPanel Orientation="Vertical">
-                            <Label Content="Resources:" Width="75"/>
-                            <Button Content="Add Resource"
-                                Command="{x:Static cmd:LevelEditorCommands.AddResource}"
-                                ToolTip="Add a new resource to this level."
+                            <Label Content="Textures:" Width="75"/>
+                            <Button Content="Add Texture"
+                                Command="{x:Static cmd:LevelEditorCommands.AddTextureResource}"
+                                ToolTip="Add a new texture to this level."
                                 FontSize="8"
                                 Margin="10,5"/>
                             <Button Content="Unselect"
                                 Command="{Binding UnselectResourceReferenceCommand}"
                                 CommandParameter="{Binding SelectedResourceReference}"
-                                ToolTip="Unselects the map resource. Once unselected, drawing on the map will put place floors."
+                                ToolTip="Unselects the map texture. Once unselected, drawing on the map will put place floors."
                                 FontSize="8"
                                 Margin="10,5"/>
                             <Button Content="Set Edges"
                                 Command="{Binding FillEdgesWithSelectedResourceReferenceCommand}"
                                 CommandParameter="{Binding SelectedResourceReference}"
-                                ToolTip="Set each tile on the edge of the map with the selected resource reference."
+                                ToolTip="Set each tile on the edge of the map with the selected texture."
                                 FontSize="8"
                                 Margin="10,5"/>
                         </StackPanel>

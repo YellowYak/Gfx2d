@@ -5,8 +5,8 @@
     /// </summary>
     public class Point2d
     {
-        public double X { get; set; }
-        public double Y { get; set; }
+        public double X;
+        public double Y;
 
         public Point2d(double x, double y)
         {

@@ -44,28 +44,16 @@ namespace Gfx2d.Engine
         /// If the tile resource is the floor, null is returned.
         /// Note that the coordinates here are relative to the 2d tile array.
         /// </summary>
-        /// <param name="x_index">The x tile index. Must be greater than or equal to 0 and strictly less than <see cref="Width"/>.</param>
-        /// <param name="y_index">The y tile index. Must be greater than or equal to 0 and strictly less than <see cref="Height"/>.</param>
         /// <returns>null if the tile resource is the floor, otherwise the wall's resource.</returns>
-        public MapResource? GetTileResource(int x_index, int y_index)
+        public MapTexture? GetMapTileTexture(int x_index, int y_index)
         {
-            if (x_index < 0 || x_index >= this.Width) throw new ArgumentOutOfRangeException(nameof(x_index));
-            if (y_index < 0 || y_index >= this.Height) throw new ArgumentOutOfRangeException(nameof(x_index));
-
             int resourceId = this.LevelData.MapTiles[y_index][x_index];
 
-            return resourceId == 0 ? null : this.LevelData.GetMapTileResources()[resourceId];
+            return resourceId == 0 ? null : this.LevelData.GetMapTextures()[resourceId];
         }
 
-        /// <summary>
-        /// The resource associated with the ceiling.
-        /// </summary>
-        public MapResource GetCeilingResource() => this.LevelData.CeilingResource;
+        public ColorArgb CeilingColor => this.LevelData.GetCeilingColor();
 
-        /// <summary>
-        /// The resource associated with the floor.
-        /// </summary>
-        /// <returns></returns>
-        public MapResource GetFloorResource() => this.LevelData.FloorResource;
+        public ColorArgb FloorColor => this.LevelData.GetFloorColor();
     }
 }

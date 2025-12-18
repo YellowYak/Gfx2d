@@ -88,7 +88,7 @@ namespace Gfx2d.Engine
                     int indX = (int)MathHelpers.Floor(bound.X / map.TileWidth);
                     int indY = (int)MathHelpers.Floor(bound.Y / map.TileWidth);
 
-                    if (map.GetTileResource(indX, indY) != null)
+                    if (map.GetMapTileTexture(indX, indY) != null)
                     {
                         newPlayerPosAllowed = false;
                         break;
@@ -141,8 +141,10 @@ namespace Gfx2d.Engine
             {
                 for (int y = 0; y < map.Height; y++)
                 {
-                    MapResource? mapResource = map.GetTileResource(x, y);
-                    ColorArgb c = mapResource == null ? map.GetFloorResource().NorthColor : mapResource.NorthColor;
+                    MapTexture? mapTexture = map.GetMapTileTexture(x, y);
+                    ColorArgb c = mapTexture == null ?
+                        map.FloorColor : 
+                        mapTexture.NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black();
 
                     state.FillRectangle(
                         x * pixelsPerTileX,
@@ -184,15 +186,22 @@ namespace Gfx2d.Engine
 #endif
 
             int sweepAngleIterations = state.CameraSweepAngleIterations;
+            
+            // Creating local variables to improve performance in the tight loop below
+            double tileWidth = map.TileWidth;
+            double wallHeight = map.WallHeight;
+            int screenWidth = state.ScreenWidth;
+            int screenHeight = state.ScreenHeight;
+            int screenHeightHalved = screenHeight / 2;
 
             // We may need to adjust how many angles we iterate through when performing the ray tracing across the camera.
             // Specifically, if there are more sweep iterations than columns on the screen then we need to drop some of the rendered columns
             List<int>? sweepAnglesToIgnore = null;
-            if (sweepAngleIterations > state.ScreenWidth)
+            if (sweepAngleIterations > screenWidth)
             {
                 // Determine exactly how many iterations we need to drop and put them in an ordered array
                 int startingAngleIndex = state.CameraAngleIndex - MathHelpers.Floor(sweepAngleIterations / 2);
-                int numberOfItersToRemove = sweepAngleIterations - state.ScreenWidth;
+                int numberOfItersToRemove = sweepAngleIterations - screenWidth;
                 int spaceBetweenEachRemoval = sweepAngleIterations / numberOfItersToRemove;
                 sweepAnglesToIgnore = new(numberOfItersToRemove);
 
@@ -206,7 +215,7 @@ namespace Gfx2d.Engine
             int endCameraAngleIndex = state.CameraAngleIndex + MathHelpers.Ceiling(state.CameraSweepAngleIterations / 2);
 
             // If the screen is significantly wider than the number of sweep angles then we may want to have each iteration render a column that is wider than just one pixel
-            int colsPerIteration = Math.Max(1, state.ScreenWidth / state.CameraSweepAngleIterations);
+            int colsPerIteration = Math.Max(1, screenWidth / state.CameraSweepAngleIterations);
 
             // Has the X coordinate of the current column being displayed on screen
             int currentColumnX = 0;
@@ -214,13 +223,13 @@ namespace Gfx2d.Engine
             // If the width taken up by the sweep is less than the width of the screen then determine the difference and center the output
             int usedScreenWidth = colsPerIteration * state.CameraSweepAngleIterations;
             int leftBuffer = 0;
-            if (usedScreenWidth < state.ScreenWidth)
+            if (usedScreenWidth < screenWidth)
             {
-                int delta = state.ScreenWidth - usedScreenWidth;
+                int delta = screenWidth - usedScreenWidth;
 
                 // Start with a rectangle of black from the far left in order to center the display
                 leftBuffer = delta / 2;
-                state.FillRectangle(0, 0, leftBuffer, state.ScreenHeight - 1, ColorArgb.Black());
+                state.FillRectangle(0, 0, leftBuffer, screenHeight - 1, ColorArgb.Black());
 
                 // Update the currentColumnX
                 currentColumnX = leftBuffer;
@@ -228,11 +237,11 @@ namespace Gfx2d.Engine
 
 
             // Determine the X and Y map indices for the player, as well as the offset within the tile.
-            int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / map.TileWidth);
-            double player_offset_x = state.PlayerPos.X - map.TileWidth * player_ind_x;
+            int player_ind_x = (int)MathHelpers.Floor(state.PlayerPos.X / tileWidth);
+            double player_offset_x = state.PlayerPos.X - tileWidth * player_ind_x;
 
-            int player_ind_y = (int)MathHelpers.Floor(state.PlayerPos.Y / map.TileWidth);
-            double player_offset_y = state.PlayerPos.Y - map.TileWidth * player_ind_y;
+            int player_ind_y = (int)MathHelpers.Floor(state.PlayerPos.Y / tileWidth);
+            double player_offset_y = state.PlayerPos.Y - tileWidth * player_ind_y;
 
 
             // Here we loop through each angle in the sweep!
@@ -277,13 +286,13 @@ namespace Gfx2d.Engine
                     cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
 
                 // Get the resource at the current tile. If this is null then the current tile is a floor, otherwise it's a wall.
-                MapResource? currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
+                MapTexture? currentTileTexture = map.GetMapTileTexture(raycast_ind_x, raycast_ind_y);
 
                 // We also want to determine which direction we encountered the wall, as walls can have different displays for each wall face.
-                ResourceSide wallSideStruckByRay = ResourceSide.North;
+                ResourceSide wallSideStruckByRay = ResourceSide.N;
 
                 // This loop sends the ray along its path from one tile to the next until it hits a wall.
-                while (currentTileResource == null)
+                while (currentTileTexture == null)
                 {
                     double triangle_x_length = 0;
                     double triangle_y_length = 0;
@@ -292,9 +301,9 @@ namespace Gfx2d.Engine
                     // Determine how much space on the Y axis exists within this tile given the Y direction the ray is heading.
                     double remaining_tile_y_length = raycast_offset_y;
                     if (rayTraceDirectionY < 0 && remaining_tile_y_length == 0)
-                        remaining_tile_y_length = map.TileWidth;
+                        remaining_tile_y_length = tileWidth;
                     if (rayTraceDirectionY > 0)
-                        remaining_tile_y_length = map.TileWidth - raycast_offset_y;
+                        remaining_tile_y_length = tileWidth - raycast_offset_y;
 
                     if (rayTraceDirectionX != 0)
                     {
@@ -308,10 +317,10 @@ namespace Gfx2d.Engine
                                 raycast_ind_x--;
 
                                 // Indicate that we hit the east side of the tile
-                                wallSideStruckByRay = ResourceSide.East;
+                                wallSideStruckByRay = ResourceSide.E;
 
                                 // In the new tile, set our X offset on the far right side
-                                raycast_offset_x = map.TileWidth;
+                                raycast_offset_x = tileWidth;
                             }
                             else
                             {
@@ -321,7 +330,7 @@ namespace Gfx2d.Engine
                                 raycast_ind_x++;
 
                                 // Indicate that we hit the west side of the tile
-                                wallSideStruckByRay = ResourceSide.West;
+                                wallSideStruckByRay = ResourceSide.W;
 
                                 // In the new tile, set our X offset on the far left side
                                 raycast_offset_x = 0;
@@ -333,9 +342,9 @@ namespace Gfx2d.Engine
 
                             // Determine the X length of our right triangle based on the X direction we are heading
                             if (rayTraceDirectionX > 0)
-                                triangle_x_length = map.TileWidth - raycast_offset_x;
+                                triangle_x_length = tileWidth - raycast_offset_x;
                             else if (rayTraceDirectionX < 0)
-                                triangle_x_length = raycast_offset_x == 0 ? map.TileWidth : raycast_offset_x;
+                                triangle_x_length = raycast_offset_x == 0 ? tileWidth : raycast_offset_x;
 
                             // Use a little trig to compute the hypotenuse and opposite side length
                             triangle_hyp_length = triangle_x_length / MathHelpers.Cos(cameraAngleIndex);
@@ -351,10 +360,10 @@ namespace Gfx2d.Engine
                                 raycast_ind_x += rayTraceDirectionX;
 
                                 // Indicate what  side of the tile we hit
-                                wallSideStruckByRay = rayTraceDirectionX < 0 ? ResourceSide.East : ResourceSide.West;
+                                wallSideStruckByRay = rayTraceDirectionX < 0 ? ResourceSide.E : ResourceSide.W;
 
                                 // Update the X and Y offsets in the new tile
-                                raycast_offset_x = rayTraceDirectionX > 0 ? 0 : map.TileWidth;
+                                raycast_offset_x = rayTraceDirectionX > 0 ? 0 : tileWidth;
                                 raycast_offset_y += triangle_y_length * rayTraceDirectionY;
                             }
                             if (triangle_y_length >= remaining_tile_y_length)
@@ -366,10 +375,10 @@ namespace Gfx2d.Engine
                                 raycast_ind_y += rayTraceDirectionY;
 
                                 // Indicate what  side of the tile we hit
-                                wallSideStruckByRay = rayTraceDirectionY < 0 ? ResourceSide.South : ResourceSide.North;
+                                wallSideStruckByRay = rayTraceDirectionY < 0 ? ResourceSide.S : ResourceSide.N;
 
                                 // Update the Y offset in the new tile
-                                raycast_offset_y = rayTraceDirectionY > 0 ? 0 : map.TileWidth;
+                                raycast_offset_y = rayTraceDirectionY > 0 ? 0 : tileWidth;
 
                                 // A little more math is needed to compute the X offset in the new tile.
                                 // Need to draw a right triangle with the opposite leg being remaining_tile_y_length and the adjacent leg the amount to adjust raycast_offset_x
@@ -391,10 +400,10 @@ namespace Gfx2d.Engine
                             raycast_ind_y--;
 
                             // Indicate that we hit the south side of the tile
-                            wallSideStruckByRay = ResourceSide.South;
+                            wallSideStruckByRay = ResourceSide.S;
 
                             // In the new tile, set our Y offset on the far bottom
-                            raycast_offset_y = map.TileWidth;
+                            raycast_offset_y = tileWidth;
                         }
                         else
                         {
@@ -404,7 +413,7 @@ namespace Gfx2d.Engine
                             raycast_ind_y++;
 
                             // Indicate that we hit the north side of the tile
-                            wallSideStruckByRay = ResourceSide.North;
+                            wallSideStruckByRay = ResourceSide.N;
 
                             // In the new tile, set our Y offset on the far top
                             raycast_offset_y = 0;
@@ -412,7 +421,7 @@ namespace Gfx2d.Engine
                     }
 
                     // Did the ray just now land on a wall tile?
-                    currentTileResource = map.GetTileResource(raycast_ind_x, raycast_ind_y);
+                    currentTileTexture = map.GetMapTileTexture(raycast_ind_x, raycast_ind_y);
                 }
 
                 // We've hit a wall! Huzzah! Determine the distance between the player and the point on the wall struck by the ray
@@ -424,9 +433,11 @@ namespace Gfx2d.Engine
                 shading = Math.Clamp(shading, 0, 0.66);
 
                 // For determining the wall height we want the -perpendicular- distance from the player to the hit wall.
-                // This is the line looking straight out from the player's POV. To calculate its length, we just need
-                // a sprinkle of trig - we know the hypotonuse length (raycastLength) - so the perpendicular distance is
-                // the length of the adjacent leg. The angle formed is the delta between the ray's angle and the camera angle.
+                // This is the line looking straight out from the player's POV. (Note: a fisheye distortion occurs if the
+                // actual distance from the player to the wall is used in place of the perpendicular distance.)
+                // To calculate its length, we just need a sprinkle of trig - we know the hypotonuse length (raycastLength) -
+                // so the perpendicular distance is the length of the adjacent leg. The angle formed is the delta between the
+                // ray's angle and the camera angle.
                 int angleIndexDelta = Math.Abs(rawCameraAngleIndex - state.CameraAngleIndex);
 
                 // Ensure we don't get a zero, as we'll be dividing by this number
@@ -434,34 +445,82 @@ namespace Gfx2d.Engine
 
 
                 // Next determine how many pixels the floor and ceiling will occupy.
+                int floorUpperBoundUnclamped = screenHeightHalved - (int)(state.CameraDistanceFromPlayer * state.CameraZ / perpDistance * screenHeight);
                 int floorUpperBound = Math.Clamp(
-                    value: state.ScreenHeightHalved - (int)(state.CameraDistanceFromPlayer * state.CameraZ / perpDistance * state.ScreenHeight),
+                    value: floorUpperBoundUnclamped,
                     min: 0,
-                    max: state.ScreenHeight
+                    max: screenHeight
                 );
 
+                int wallUpperBoundUnclamped = (int)(state.CameraDistanceFromPlayer * wallHeight / perpDistance * screenHeight) + floorUpperBoundUnclamped;
                 int wallUpperBound = Math.Clamp(
-                    value: (int)(state.CameraDistanceFromPlayer * map.WallHeight / perpDistance * state.ScreenHeight) + floorUpperBound,
+                    value: wallUpperBoundUnclamped,
                     min: 0,
-                    max: state.ScreenHeight
+                    max: screenHeight
                 );
 
                 // Map this to our coordinate system and start drawing!
-                int bottomOfCeiling = state.ScreenHeight - wallUpperBound;
+                int bottomOfCeiling = screenHeight - wallUpperBound;
                 if (bottomOfCeiling > 0)
                 {
-                    if (bottomOfCeiling == state.ScreenHeight)
+                    if (bottomOfCeiling == screenHeight)
                         bottomOfCeiling--;
-                    state.FillRectangle(currentColumnX, 0, (currentColumnX + colsPerIteration) - 1, bottomOfCeiling, map.GetCeilingResource().NorthColor);
+
+                    state.FillRectangle(
+                        currentColumnX,
+                        0,
+                        (currentColumnX + colsPerIteration) - 1,
+                        bottomOfCeiling,
+                        map.CeilingColor
+                    );
                 }
 
-                int bottomOfWall = state.ScreenHeight - floorUpperBound;
-                if (bottomOfWall == state.ScreenHeight)
+                int bottomOfWall = screenHeight - floorUpperBound;
+                if (bottomOfWall == screenHeight)
                     bottomOfWall--;
-                state.FillRectangle(currentColumnX, bottomOfCeiling, (currentColumnX + colsPerIteration) - 1, bottomOfWall, currentTileResource.GetColorForSide(wallSideStruckByRay).ApplyShading(shading));
+
+                // Calculate which portion of the texture is actually visible
+                int fullWallHeight = wallUpperBoundUnclamped - floorUpperBoundUnclamped;
+
+                // The wall is a texture rather than a solid color, so we need to determine which column of the texture to use based on where the ray struck the wall
+                double offsetOnWall = wallSideStruckByRay == ResourceSide.N || wallSideStruckByRay == ResourceSide.S ? raycast_offset_x : raycast_offset_y;
+                Bitmap texture = currentTileTexture.GetBitmapForSide(wallSideStruckByRay);
+
+                // Determine the corresponding X coordinate on the texture
+                int textureX = (int)(offsetOnWall / tileWidth * texture.Width);
+                textureX = Math.Clamp(textureX, 0, texture.Width - 1);
+
+                // Get the column of colors on the texture for the textureX we're currently rendering
+                ColorArgb[] textureColumn = texture.GetColorColumn(wallSideStruckByRay, textureX);
+
+                for (int y = bottomOfCeiling; y < bottomOfWall; y++)
+                {
+                    // How many pixels from the top of the THEORETICAL wall is screen position y?
+                    // Top of theoretical wall in screen coords: screenHeight - wallUpperBoundUnclamped
+                    int pixelsFromTopOfWall = y - (screenHeight - wallUpperBoundUnclamped);
+
+                    double textureYRatio = (double)pixelsFromTopOfWall / (double)fullWallHeight;
+                    int textureY = (int)(textureYRatio * texture.Height);
+                    textureY = Math.Clamp(textureY, 0, texture.Height - 1);
+
+                    // Get the apporpriate color from the texture color column and apply shading
+                    ColorArgb texelColor = textureColumn[textureY].ApplyShading(shading);
+
+                    // Draw the pixel column
+                    for (int colX = currentColumnX; colX < currentColumnX + colsPerIteration; colX++)
+                    {
+                        state.SetPixel(colX, y, texelColor);
+                    }
+                }
 
                 if (floorUpperBound > 0)
-                    state.FillRectangle(currentColumnX, state.ScreenHeight - floorUpperBound, (currentColumnX + colsPerIteration) - 1, state.ScreenHeight - 1, map.GetFloorResource().NorthColor);
+                    state.FillRectangle(
+                        currentColumnX,
+                        screenHeight - floorUpperBound,
+                        (currentColumnX + colsPerIteration) - 1,
+                        screenHeight - 1,
+                        map.FloorColor
+                    );
 
 
 #if DEBUG
@@ -493,7 +552,7 @@ namespace Gfx2d.Engine
 
             // Draw the right buffer, if needed
             if (leftBuffer > 0)
-                state.FillRectangle(currentColumnX, 0, state.ScreenWidth - 1, state.ScreenHeight - 1, ColorArgb.Black());
+                state.FillRectangle(currentColumnX, 0, screenWidth - 1, screenHeight - 1, ColorArgb.Black());
         }
 
         public void PresentPixelBuffer()

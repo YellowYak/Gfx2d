@@ -5,10 +5,10 @@
     /// </summary>
     public class ColorArgb
     {
-        public byte A { get; private set; }
-        public byte R { get; private set; }
-        public byte G { get; private set; }
-        public byte B { get; private set; }
+        public byte A;
+        public byte R;
+        public byte G;
+        public byte B;
 
         public ColorArgb(byte a, byte r, byte g, byte b)
         {
@@ -39,9 +39,17 @@
         /// <returns>A new ColorArgb that has had the specified level of shading applied.</returns>
         public ColorArgb ApplyShading(double shading)
         {
-            if (shading >= 1) return Black();
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
+            // TODO: Improve performance by creating a lookup table for shading values rather than calculating on the fly.
 
-            double shadingPercent = 1 - Math.Max(shading, 0);
+            double shadingPercent = 1 - shading;
 
             return new ColorArgb(
                 this.A,
@@ -52,6 +60,7 @@
         }
 
         public static ColorArgb Black() => new ColorArgb(255, 0, 0, 0);
+        public static ColorArgb White() => new ColorArgb(255, 255, 255, 255);
         public static ColorArgb LightGray() => new ColorArgb(255, 222, 222, 222);
     }
 }

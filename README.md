@@ -35,10 +35,9 @@ A WPF application for creating and editing textures and sprites.
 * Look into improving raycasting logic for determining the position of the raycast in the subsequent map tile. Presently, the logic uses
   trigonometeric functions to find each tile boundary, which may be inefficient. Could use them once to determine the slope, then just use
   algebra to find the remaining tile boundaries?
-* Update the engine to support textures for walls.
 * Update the engine to support textures for floors and ceilings.
 * Implement sprite rendering for objects within the scene (enemies, items, etc.).
-* Add WPF app to create and edit textures for walls, floors, ceilings, and sprites
+* Update **Gfx2d.TextureEditor** app to allow editing the West, East, and South wall textures.
 * Update **Gfx2d.LevelEditor** to allow placement of sprite starting locations on the map.
 * Look into adding sound support in SDL2. E.g., play a sound when the player bumps into a wall.
 * Update the engine to support drawing text on screen.

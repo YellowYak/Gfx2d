@@ -521,9 +521,9 @@ namespace Gfx2d.LevelEditor.ViewModels
             _model.MapTiles[cell.Row][cell.Column] = newValue;
 
             // Get the resource data for the new value
-            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
-            ColorArgb newColor = resourceData.ContainsKey(newValue)
-                ? resourceData[newValue].NorthColor
+            Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
+            ColorArgb newColor = textureData.ContainsKey(newValue)
+                ? textureData[newValue].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black()
                 : ColorArgb.LightGray();
 
             // Update the cell view model
@@ -630,9 +630,9 @@ namespace Gfx2d.LevelEditor.ViewModels
                 if (cell.Row == 0 || cell.Row == MapHeight - 1 || cell.Column == 0 || cell.Column == MapWidth - 1)
                 {
                     // Get the resource data for the new value
-                    Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
-                    ColorArgb newColor = resourceData.ContainsKey(currentlySelectedResourceRef.Id)
-                        ? resourceData[currentlySelectedResourceRef.Id].NorthColor
+                    Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
+                    ColorArgb newColor = textureData.ContainsKey(currentlySelectedResourceRef.Id)
+                        ? textureData[currentlySelectedResourceRef.Id].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black()
                         : ColorArgb.LightGray();
 
                     cell.Value = currentlySelectedResourceRef.Id;
@@ -646,13 +646,13 @@ namespace Gfx2d.LevelEditor.ViewModels
             OnPropertyChanged(nameof(MapCells));
         }
 
-        public ICommand AddResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddResourceReference);
-        private void AddResourceReference(IEnumerable<string> paths)
+        public ICommand AddTextureResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddTextureResourceReference);
+        private void AddTextureResourceReference(IEnumerable<string> paths)
         {
             // First make sure all files are kosher
             foreach (string path in paths)
-                if (!ResourceData.ValidFile(path))
-                    throw new Exception($"The resource file {path} either does not exist, cannot be opened, or is an invalid level data file.");
+                if (!TextureData.ValidFile(path))
+                    throw new Exception($"The texture file {path} either does not exist, cannot be opened, or is an invalid texture data file.");
 
             // Determine max ResourceRefId being used in this level
             int currentRrId = 1;
@@ -662,7 +662,7 @@ namespace Gfx2d.LevelEditor.ViewModels
             // Now load them up!
             foreach (string path in paths)
             {
-                ResourceData rd = ResourceData.LoadFromFile(path);
+                TextureData texture = TextureData.LoadFromFile(path);
 
                 // Create new ResourceReference
                 ResourceReference rr = new()
@@ -673,9 +673,9 @@ namespace Gfx2d.LevelEditor.ViewModels
 
                 _model.MapTextures.Add(rr);
 
-                _model.AddMapTileResource(
+                _model.AddMapTexture(
                     rr.Id,
-                    rd
+                    texture
                 );
 
                 currentRrId++;
@@ -707,7 +707,7 @@ namespace Gfx2d.LevelEditor.ViewModels
         private void ConstructMapCellsCollection()
         {
             // Construct the MapCellViewModel collection from the underlying model's MapTiles
-            Dictionary<int, MapResource> resourceData = _model.GetMapTileResources();
+            Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
 
             _mapCells = new ObservableCollection<MapCellViewModel>();
             for (int row = 0; row < _model.MapTiles.Length; row++)
@@ -715,7 +715,9 @@ namespace Gfx2d.LevelEditor.ViewModels
                 int[] rowData = _model.MapTiles[row];
                 for (int col = 0; col < rowData.Length; col++)
                 {
-                    ColorArgb rr = resourceData.ContainsKey(rowData[col]) ? resourceData[rowData[col]].NorthColor : new ColorArgb(_model.FloorColor);
+                    ColorArgb rr = textureData.ContainsKey(rowData[col]) ?
+                        textureData[rowData[col]].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black() : 
+                        new ColorArgb(_model.FloorColor);
 
                     _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
                 }

@@ -37,25 +37,24 @@ namespace Gfx2d.Resources
             string json = File.ReadAllText(path);
             var level = JsonConvert.DeserializeObject<LevelData>(json)!;
 
-            // Loop through the level's tile resources and load those in
-            level.mapTileResources.Clear();
+            // Loop through the level's map textures and load those in
+            level.mapTextures.Clear();
             foreach (ResourceReference rr in level.MapTextures)
             {
                 string fullPath = Path.Combine(folder, rr.FileName);
-                if (!File.Exists(fullPath)) throw new FileNotFoundException("Resource file not found.", fullPath);
+                if (!File.Exists(fullPath)) throw new FileNotFoundException("Texture file not found.", fullPath);
 
                 string resourceJson = File.ReadAllText(fullPath);
-                ResourceData data = JsonConvert.DeserializeObject<ResourceData>(resourceJson)!;
+                TextureData data = JsonConvert.DeserializeObject<TextureData>(resourceJson)!;
 
-                level.AddMapTileResource(
+                level.AddMapTexture(
                     rr.Id,
                     data
                 );
             }
 
-            // Read in the level's ceiling & floor resource color data
-            level.ceilingResource = MapResource.Create("Ceiling", level.CeilingColor);
-            level.floorResource = MapResource.Create("Ceiling", level.FloorColor);
+            level.floorColorArgb = new ColorArgb(level.FloorColor);
+            level.ceilingColorArgb = new ColorArgb(level.CeilingColor);
 
             return level;
         }
@@ -101,30 +100,29 @@ namespace Gfx2d.Resources
             }
         }
 
-        private Dictionary<int, MapResource> mapTileResources = new();
-        public Dictionary<int, MapResource> GetMapTileResources() => this.mapTileResources;
-        public void AddMapTileResource(int resourceRefId, MapResource tileResource)
+        private Dictionary<int, MapTexture> mapTextures = new();
+        public Dictionary<int, MapTexture> GetMapTextures() => this.mapTextures;
+        public void AddMapTexture(int resourceRefId, MapTexture mapTexture)
         {
-            mapTileResources.Add(
+            mapTextures.Add(
                 resourceRefId,
-                tileResource
+                mapTexture
             );
         }
-        public void AddMapTileResource(int resourceRefId, ResourceData resource)
+        public void AddMapTexture(int resourceRefId, TextureData resource)
         {
-            AddMapTileResource(
+            AddMapTexture(
                 resourceRefId,
-                MapResource.Create(resource)
+                MapTexture.Create(resource)
             );
         }
 
-        private MapResource floorResource = new();
-        [JsonIgnore]
-        public MapResource FloorResource => floorResource;
 
-        private MapResource ceilingResource = new();
-        [JsonIgnore]
-        public MapResource CeilingResource => ceilingResource;
+        private ColorArgb? floorColorArgb;
+        public ColorArgb GetFloorColor() => floorColorArgb ?? ColorArgb.White();
+
+        private ColorArgb? ceilingColorArgb;
+        public ColorArgb GetCeilingColor() => ceilingColorArgb ?? ColorArgb.White();
 
 
         [JsonProperty("name")]

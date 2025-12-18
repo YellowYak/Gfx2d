@@ -38,7 +38,7 @@ namespace Gfx2d.LevelEditor
             CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, HandleCommandSaveAs));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, HandleCommandClose));
 
-            CommandBindings.Add(new CommandBinding(LevelEditorCommands.AddResource, HandleAddResource));
+            CommandBindings.Add(new CommandBinding(LevelEditorCommands.AddTextureResource, HandleAddTextureResource));
             CommandBindings.Add(new CommandBinding(LevelEditorCommands.ResizeMap, HandleResizeMap));
             CommandBindings.Add(new CommandBinding(LevelEditorCommands.LaunchLevel, HandleLaunchLevel));
         }
@@ -175,12 +175,12 @@ namespace Gfx2d.LevelEditor
             ) == MessageBoxResult.Yes;
         }
 
-        private void HandleAddResource(object sender, ExecutedRoutedEventArgs e)
+        private void HandleAddTextureResource(object sender, ExecutedRoutedEventArgs e)
         {
             // Have the user select the resource JSON file
             var dlg = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Open Resource File",
+                Title = "Open Texture File",
                 Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
                 DefaultExt = ".json",
                 Multiselect = true
@@ -192,13 +192,13 @@ namespace Gfx2d.LevelEditor
             {
                 try
                 {
-                    ViewModel.AddResourceReferenceCommand.Execute(dlg.FileNames);
+                    ViewModel.AddTextureResourceReferenceCommand.Execute(dlg.FileNames);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(
                         messageBoxText: ex.Message,
-                        caption: "Error Loading Resource File",
+                        caption: "Error Loading Texture File",
                         button: MessageBoxButton.OK,
                         icon: MessageBoxImage.Error
                     );
