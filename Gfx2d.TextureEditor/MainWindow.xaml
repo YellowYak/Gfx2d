@@ -1,0 +1,224 @@
+﻿<Window x:Class="Gfx2d.TextureEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gfx2d.TextureEditor"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Closing="winMainWindow_Closing"
+        Title="{Binding WindowTitle}"
+        Width="1250" Height="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Menu Bar -->
+        <Menu x:Name="mnuMain" Grid.Row="0">
+            <MenuItem x:Name="mnuMain_File" Header="_File">
+                <MenuItem x:Name="mnuMain_File_New" Header="_New" Command="ApplicationCommands.New" InputGestureText="Ctrl+N">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/new.png"
+                           Width="12" Height="12"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_File_Open" Header="_Open File..." Command="ApplicationCommands.Open">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/open.png"
+                           Width="12" Height="12"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_Level_Save" Header="_Save Level" Command="ApplicationCommands.Save">
+                    <MenuItem.Icon>
+                        <Grid Width="16" Height="16">
+                            <Image Source="/Images/save.png"
+                           Width="12" Height="12"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"/>
+                        </Grid>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="mnuMain_File_SaveAs" Header="Save As..." Command="ApplicationCommands.SaveAs" />
+                <Separator/>
+                <MenuItem x:Name="mnuMain_File_Exit" Header="E_xit" Command="ApplicationCommands.Close" InputGestureText="Alt+F4" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Main content -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ========================= -->
+            <!-- LEFT SIDE: FORM CONTROLS -->
+            <!-- ========================= -->
+            <Border Grid.Column="0" 
+                    BorderBrush="#CCCCCC" 
+                    BorderThickness="1" 
+                    Padding="10"
+                    Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="Tools" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,10"/>
+
+                    <!-- Tool Selection -->
+                    <GroupBox Header="Tool" Margin="0,0,0,10">
+                        <StackPanel>
+                            <RadioButton x:Name="rbPencil" 
+                                       Content="Pencil" 
+                                       IsChecked="True" 
+                                       Margin="5"/>
+                            <RadioButton x:Name="rbEraser" 
+                                       Content="Eraser" 
+                                       Margin="5"/>
+                            <RadioButton x:Name="rbFill" 
+                                       Content="Fill Bucket" 
+                                       Margin="5"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Color Palette -->
+                    <TextBlock Text="Color Palette" 
+                               FontSize="14" 
+                               FontWeight="Bold" 
+                               Margin="0,10,0,5"/>
+
+                    <!-- Selected Color Display -->
+                    <Border BorderBrush="Black" 
+                            BorderThickness="2" 
+                            Height="40" 
+                            Margin="0,0,0,10">
+                        <Rectangle x:Name="rectSelectedColor" 
+                                   Fill="{Binding SelectedColor}"/>
+                    </Border>
+
+                    <!-- Color Palette Grid -->
+                    <UniformGrid x:Name="colorPalette" 
+                                 Columns="8" 
+                                 Rows="4"
+                                 Margin="0,0,0,10">
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#000000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FFFFFF" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FF0000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#00FF00" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#0000FF" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FFFF00" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FF00FF" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#00FFFF" Margin="2"/>
+
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#800000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#808080" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#800080" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#008000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#000080" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#808000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#008080" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#C0C0C0" Margin="2"/>
+
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FF8000" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FF0080" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#8000FF" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#0080FF" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#80FF00" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#00FF80" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FFB6C1" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#FFA500" Margin="2"/>
+
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#8B4513" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#A52A2A" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#DEB887" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#5F9EA0" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#7FFF00" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#D2691E" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#6495ED" Margin="2"/>
+                        <Button Height="15" Command="{Binding UpdateSelectedColorCommand}" CommandParameter="{Binding Background, RelativeSource={RelativeSource Self}}" Background="#DC143C" Margin="2"/>                        
+                    </UniformGrid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Custom Color:</Label>
+                        <xctk:ColorPicker
+                            x:Name="cpCustomColor"
+                            Margin="2"
+                            Width="50"
+                            ColorMode="ColorCanvas"/>
+                        <Button
+                            Margin="10,0"
+                            FontSize="10"
+                            Padding="10,0"
+                            Command="{Binding UpdateSelectedColorCommand}"                            
+                            Content="Apply">
+                            <Button.CommandParameter>
+                                <SolidColorBrush Color="{Binding SelectedColor, ElementName=cpCustomColor}"/>
+                            </Button.CommandParameter>
+                        </Button>
+                    </StackPanel>
+                    
+
+                    <!-- Actions -->
+                    <Button x:Name="btnClear" 
+                            Content="Clear Canvas" 
+                            Padding="10,5" 
+                            Margin="0,10,0,5" Click="btnClear_Click"/>
+
+                    <TextBlock TextWrapping="Wrap">
+                        TODOs:
+                            * Add textbox for Name
+                            * Add support for East/West/South textures (and have options for copying pixels between them)
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- ================================ -->
+            <!-- RIGHT SIDE: 64x64 editing UI    -->
+            <!-- ================================ -->
+            <Border Grid.Column="1" 
+                    BorderBrush="#CCCCCC" 
+                    BorderThickness="1" 
+                    Padding="10">
+                <Viewbox Stretch="Uniform">
+                    <Border BorderBrush="Black" 
+                            BorderThickness="2" 
+                            Background="White">
+                        <UniformGrid x:Name="pixelGrid" 
+                                     Rows="64" 
+                                     Columns="64" 
+                                     Width="512" 
+                                     Height="512"
+                                     MouseLeftButtonDown="PixelGrid_MouseLeftButtonDown"
+                                     MouseRightButtonDown="PixelGrid_MouseRightButtonDown"
+                                     MouseMove="PixelGrid_MouseMove"
+                                     MouseLeftButtonUp="PixelGrid_MouseUp"
+                                     MouseRightButtonUp="PixelGrid_MouseUp"
+                                     MouseEnter="PixelGrid_MouseEnter"
+                                     MouseLeave="PixelGrid_MouseLeave">
+                            <!-- 64x64 = 4096 rectangles will be added programmatically -->
+                        </UniformGrid>
+                    </Border>
+                </Viewbox>
+            </Border>
+        </Grid>
+    </Grid>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F4"
+                Modifiers="Alt"
+                Command="ApplicationCommands.Close"/>
+        <KeyBinding Key="N"
+                Modifiers="Ctrl"
+                Command="ApplicationCommands.New"/>
+    </Window.InputBindings>
+</Window>

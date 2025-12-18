@@ -26,6 +26,10 @@ and passes that instance to the **Gfx2d.Engine** for rendering. It also captures
 
 A WPF application for creating and editing level maps.
 
+## Gfx2d.TextureEditor
+
+A WPF application for creating and editing textures and sprites.
+
 ## Major TODOs
 
 * Look into improving raycasting logic for determining the position of the raycast in the subsequent map tile. Presently, the logic uses
