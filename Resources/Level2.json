@@ -2094,7 +2094,7 @@
       1
     ]
   ],
-  "tileResources": [
+  "mapTextures": [
     {
       "id": 1,
       "fileName": "BlueWall.json"

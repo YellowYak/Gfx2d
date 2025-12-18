@@ -39,7 +39,7 @@ namespace Gfx2d.Resources
 
             // Loop through the level's tile resources and load those in
             level.mapTileResources.Clear();
-            foreach (ResourceReference rr in level.TileResources)
+            foreach (ResourceReference rr in level.MapTextures)
             {
                 string fullPath = Path.Combine(folder, rr.FileName);
                 if (!File.Exists(fullPath)) throw new FileNotFoundException("Resource file not found.", fullPath);
@@ -153,8 +153,8 @@ namespace Gfx2d.Resources
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         };
 
-        [JsonProperty("tileResources", Required = Required.Always)]
-        public List<ResourceReference> TileResources { get; set; } = new();
+        [JsonProperty("mapTextures", Required = Required.Always)]
+        public List<ResourceReference> MapTextures { get; set; } = new();
 
         [JsonProperty("ceilingColor", Required = Required.Always)]
         [JsonConverter(typeof(ByteArrayAsArrayConverter))]

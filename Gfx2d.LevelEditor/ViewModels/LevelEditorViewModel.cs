@@ -33,7 +33,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                 _model.FloorColor[3]
             );
 
-            _resourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
+            _resourceReferences = new ObservableCollection<ResourceReference>(_model.MapTextures);
 
             ConstructMapCellsCollection();            
         }
@@ -602,7 +602,7 @@ namespace Gfx2d.LevelEditor.ViewModels
 
             // Remove the ResourceReference from both the view model and underlying model
             ResourceReferences.Remove(resourceRef);
-            _model.TileResources = ResourceReferences.ToList();
+            _model.MapTextures = ResourceReferences.ToList();
 
             // Remove all references to the resouce reference from the map, if any
             if (rrCount > 0)
@@ -656,8 +656,8 @@ namespace Gfx2d.LevelEditor.ViewModels
 
             // Determine max ResourceRefId being used in this level
             int currentRrId = 1;
-            if (_model.TileResources.Any())
-                currentRrId = _model.TileResources.Max(rr => rr.Id) + 1;
+            if (_model.MapTextures.Any())
+                currentRrId = _model.MapTextures.Max(rr => rr.Id) + 1;
 
             // Now load them up!
             foreach (string path in paths)
@@ -671,7 +671,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                     FileName = System.IO.Path.GetFileName(path)
                 };
 
-                _model.TileResources.Add(rr);
+                _model.MapTextures.Add(rr);
 
                 _model.AddMapTileResource(
                     rr.Id,
@@ -681,7 +681,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                 currentRrId++;
             }
 
-            ResourceReferences = new ObservableCollection<ResourceReference>(_model.TileResources);
+            ResourceReferences = new ObservableCollection<ResourceReference>(_model.MapTextures);
         }
         #endregion
 
