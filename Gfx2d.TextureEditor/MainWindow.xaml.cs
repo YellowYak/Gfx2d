@@ -218,7 +218,6 @@ namespace Gfx2d.TextureEditor
             }
         }
 
-        int iters = 0;
         private void FloodFill(int row, int col, Color targetColor, Color replacementColor)
         {
             Queue<(int, int)> pixelsToCheck = new();

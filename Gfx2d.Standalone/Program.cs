@@ -4,7 +4,6 @@ using SDL2;
 public class StandaloneGameHost : IGameHost
 {
     private IntPtr window;
-    private bool running = true;
     private GameEngine engine;
 
     public int ScreenWidth { get; }
