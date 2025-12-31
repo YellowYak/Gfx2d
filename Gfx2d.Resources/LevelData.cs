@@ -42,13 +42,14 @@ namespace Gfx2d.Resources
             foreach (ResourceReference rr in level.MapTextures)
             {
                 string fullPath = Path.Combine(folder, rr.FileName);
-                if (!File.Exists(fullPath)) throw new FileNotFoundException("Texture file not found.", fullPath);
+                if (!File.Exists(fullPath)) throw new FileNotFoundException("Resource reference file not found.", fullPath);
 
                 string resourceJson = File.ReadAllText(fullPath);
                 TextureData data = JsonConvert.DeserializeObject<TextureData>(resourceJson)!;
 
                 level.AddMapTexture(
                     rr.Id,
+                    System.IO.Path.GetDirectoryName(fullPath)!,
                     data
                 );
             }
@@ -109,11 +110,11 @@ namespace Gfx2d.Resources
                 mapTexture
             );
         }
-        public void AddMapTexture(int resourceRefId, TextureData resource)
+        public void AddMapTexture(int resourceRefId, string folder, TextureData resource)
         {
             AddMapTexture(
                 resourceRefId,
-                MapTexture.Create(resource)
+                MapTexture.Create(folder, resource)
             );
         }
 

@@ -13,7 +13,7 @@ Pre-requisites:
 * .NET 10
 * Visual Studio
 
-Open the Solution in Visual Studio. Set the appropriate project as the Start Up Project: **Gfx2d.Standalone** to "play" the game; **Gfx2d.LevelEditor** to create or edit a level; or **Gfx2d.TextureEditor** to create or edit a texture. Then Build and Run the project. (Note: presently the **Gfx2d.Standalone** project has a hard-coded path to the level JSON file - you'll need to update this manually.)
+Open the Solution in Visual Studio. Set the appropriate project as the Start Up Project: **Gfx2d.Standalone** to "play" the game; or **Gfx2d.LevelEditor** to create or edit a level. Then Build and Run the project. (Note: presently the **Gfx2d.Standalone** project has a hard-coded path to the level JSON file - you'll need to update this manually.)
 
 ## Gfx2d.Engine
 
@@ -36,17 +36,12 @@ and passes that instance to the **Gfx2d.Engine** for rendering. It also captures
 
 A WPF application for creating and editing level maps.
 
-## Gfx2d.TextureEditor
-
-A WPF application for creating and editing textures and sprites.
-
 ## Major TODOs
 
 * Look into improving raycasting logic for determining the position of the raycast in the subsequent map tile. Presently, the logic uses
   trigonometeric functions to find each tile boundary, which may be inefficient. Could use them once to determine the slope, then just use algebra to find the remaining tile boundaries?
 * Update the engine to support textures for floors and ceilings.
 * Implement sprite rendering for objects within the scene (enemies, items, etc.).
-* Update **Gfx2d.TextureEditor** app to allow editing the West, East, and South wall textures.
 * Update **Gfx2d.LevelEditor** to allow placement of sprite starting locations on the map.
 * Look into adding sound support in SDL2. E.g., play a sound when the player bumps into a wall.
 * Update the engine to support drawing text on screen.
@@ -56,4 +51,8 @@ A WPF application for creating and editing textures and sprites.
 ## Credits & Thanks
 
 * Ideas & inspiration from Tim Wheeler's blog post, [Wolfenstein 3D Raycasting in C](https://timallanwheeler.com/blog/2023/04/01/wolfenstein-3d-raycasting-in-c/)
-* Icons from https://www.iconpacks.net/
+* PNG image processing from [SixLabors.ImageSharp](https://sixlabors.com/products/imagesharp/)
+* Icons from [IconPacks](https://www.iconpacks.net/)
+* Map textures from:
+
+  * [CodeSpree from Seamless 64px RPG Tiles Pack Pack](https://codespree.itch.io/seamless-rpg-tiles) (CC BY-SA 4.0)

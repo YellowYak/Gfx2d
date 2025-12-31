@@ -1,0 +1,9 @@
+{
+  "name": "Gravel",
+  "width": 64,
+  "height": 64,
+  "northFileName": "Gravel-N.png",
+  "eastFileName": "Gravel-E.png",
+  "southFileName": "Gravel-S.png",
+  "westFileName": "Gravel-W.png"
+}

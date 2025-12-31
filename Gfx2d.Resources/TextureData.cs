@@ -1,5 +1,4 @@
-﻿using Gfx2d.Resources.Serialization;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Gfx2d.Resources
 {
@@ -20,30 +19,6 @@ namespace Gfx2d.Resources
         public const int TextureWidth = 64;
         public const int TextureHeight = 64;
 
-        public TextureData()
-        {
-            North = new int[TextureHeight][][];
-            East = new int[TextureHeight][][];
-            South = new int[TextureHeight][][];
-            West = new int[TextureHeight][][];
-
-            for (int y = 0; y < TextureHeight; y++)
-            {
-                North[y] = new int[TextureWidth][];
-                East[y] = new int[TextureWidth][];
-                South[y] = new int[TextureWidth][];
-                West[y] = new int[TextureWidth][];
-
-                for (int x = 0; x < TextureWidth; x++)
-                {
-                    North[y][x] = new int[4] { 255, 255, 255, 255 };
-                    East[y][x] = new int[4] { 255, 255, 255, 255 };
-                    South[y][x] = new int[4] { 255, 255, 255, 255 };
-                    West[y][x] = new int[4] { 255, 255, 255, 255 };
-                }
-            }
-        }
-
         [JsonProperty("name", Required = Required.Always)]
         public string Name { get; set; } = "New texture";
 
@@ -55,14 +30,14 @@ namespace Gfx2d.Resources
         public int Height { get; set; } = TextureHeight;
 
 
-        [JsonProperty("north", Required = Required.Always)]
-        public int[][][] North { get; set; }
-        [JsonProperty("east")]
-        public int[][][] East { get; set; }
-        [JsonProperty("south")]
-        public int[][][] South { get; set; }
-        [JsonProperty("west")]
-        public int[][][] West { get; set; }
+        [JsonProperty("northFileName", Required = Required.Always)]
+        public string NorthFileName { get; set; } = string.Empty;
+        [JsonProperty("eastFileName")]
+        public string EastFileName { get; set; } = string.Empty;
+        [JsonProperty("southFileName")]
+        public string SouthFileName { get; set; } = string.Empty;
+        [JsonProperty("westFileName")]
+        public string WestFileName { get; set; } = string.Empty;
 
 
         /// <summary>

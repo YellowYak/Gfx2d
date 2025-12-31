@@ -144,7 +144,7 @@ namespace Gfx2d.Engine
                     MapTexture? mapTexture = map.GetMapTileTexture(x, y);
                     ColorArgb c = mapTexture == null ?
                         map.FloorColor : 
-                        mapTexture.NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black();
+                        mapTexture.GetRepresentativeColor() ?? ColorArgb.Black();
 
                     state.FillRectangle(
                         x * pixelsPerTileX,
@@ -483,14 +483,13 @@ namespace Gfx2d.Engine
 
                 // The wall is a texture rather than a solid color, so we need to determine which column of the texture to use based on where the ray struck the wall
                 double offsetOnWall = wallSideStruckByRay == ResourceSide.N || wallSideStruckByRay == ResourceSide.S ? raycast_offset_x : raycast_offset_y;
-                Bitmap texture = currentTileTexture.GetBitmapForSide(wallSideStruckByRay);
 
                 // Determine the corresponding X coordinate on the texture
-                int textureX = (int)(offsetOnWall / tileWidth * texture.Width);
-                textureX = Math.Clamp(textureX, 0, texture.Width - 1);
+                int textureX = (int)(offsetOnWall / tileWidth * MapTexture.Width);
+                textureX = Math.Clamp(textureX, 0, MapTexture.Width - 1);
 
                 // Get the column of colors on the texture for the textureX we're currently rendering
-                ColorArgb[] textureColumn = texture.GetColorColumn(wallSideStruckByRay, textureX);
+                ColorArgb[] textureColumn = currentTileTexture.GetColorColumn(wallSideStruckByRay, textureX);
 
                 for (int y = bottomOfCeiling; y < bottomOfWall; y++)
                 {
@@ -499,8 +498,8 @@ namespace Gfx2d.Engine
                     int pixelsFromTopOfWall = y - (screenHeight - wallUpperBoundUnclamped);
 
                     double textureYRatio = (double)pixelsFromTopOfWall / (double)fullWallHeight;
-                    int textureY = (int)(textureYRatio * texture.Height);
-                    textureY = Math.Clamp(textureY, 0, texture.Height - 1);
+                    int textureY = (int)(textureYRatio * MapTexture.Height);
+                    textureY = Math.Clamp(textureY, 0, MapTexture.Height - 1);
 
                     // Get the apporpriate color from the texture color column and apply shading
                     ColorArgb texelColor = textureColumn[textureY].ApplyShading(shading);

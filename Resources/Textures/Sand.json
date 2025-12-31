@@ -1,0 +1,9 @@
+{
+  "name": "Sand",
+  "width": 64,
+  "height": 64,
+  "northFileName": "SandDark.png",
+  "eastFileName": "SandLight.png",
+  "southFileName": "SandDark.png",
+  "westFileName": "SandLight.png"
+}

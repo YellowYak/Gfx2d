@@ -523,7 +523,7 @@ namespace Gfx2d.LevelEditor.ViewModels
             // Get the resource data for the new value
             Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
             ColorArgb newColor = textureData.ContainsKey(newValue)
-                ? textureData[newValue].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black()
+                ? textureData[newValue].GetRepresentativeColor() ?? ColorArgb.Black()
                 : ColorArgb.LightGray();
 
             // Update the cell view model
@@ -632,7 +632,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                     // Get the resource data for the new value
                     Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
                     ColorArgb newColor = textureData.ContainsKey(currentlySelectedResourceRef.Id)
-                        ? textureData[currentlySelectedResourceRef.Id].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black()
+                        ? textureData[currentlySelectedResourceRef.Id].GetRepresentativeColor() ?? ColorArgb.Black()
                         : ColorArgb.LightGray();
 
                     cell.Value = currentlySelectedResourceRef.Id;
@@ -675,6 +675,7 @@ namespace Gfx2d.LevelEditor.ViewModels
 
                 _model.AddMapTexture(
                     rr.Id,
+                    System.IO.Path.GetFileName(rr.FileName),
                     texture
                 );
 
@@ -716,7 +717,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                 for (int col = 0; col < rowData.Length; col++)
                 {
                     ColorArgb rr = textureData.ContainsKey(rowData[col]) ?
-                        textureData[rowData[col]].NorthBitmap?.GetRepresentativeColor() ?? ColorArgb.Black() : 
+                        textureData[rowData[col]].GetRepresentativeColor() ?? ColorArgb.Black() : 
                         new ColorArgb(_model.FloorColor);
 
                     _mapCells.Add(new MapCellViewModel(row, col, rowData[col], rr));
