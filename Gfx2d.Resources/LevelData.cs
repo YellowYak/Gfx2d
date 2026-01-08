@@ -9,11 +9,11 @@ namespace Gfx2d.Resources
         /// Determines if a specific file is a valid level data file.
         /// </summary>
         /// <returns>True if the specified file exists and can be deserialized without error; false otherwise.</returns>
-        public static bool ValidFile(string path)
+        public static bool ValidFile(string levelFilePath)
         {
             try
             {
-                string json = File.ReadAllText(path);
+                string json = File.ReadAllText(levelFilePath);
                 JsonConvert.DeserializeObject<LevelData>(json);
                 return true;
             }
@@ -26,15 +26,15 @@ namespace Gfx2d.Resources
         /// <summary>
         /// Loads a level and its associated resources from a JSON file.
         /// </summary>
-        public static LevelData LoadFromFile(string path)
+        public static LevelData LoadFromFile(string levelFilePath)
         {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
-            if (!File.Exists(path)) throw new FileNotFoundException("Level file not found.", path);
+            if (string.IsNullOrEmpty(levelFilePath)) throw new ArgumentNullException(nameof(levelFilePath));
+            if (!File.Exists(levelFilePath)) throw new FileNotFoundException("Level file not found.", levelFilePath);
 
-            string folder = Path.GetDirectoryName(path)!;
+            string folder = Path.GetDirectoryName(levelFilePath)!;
 
             // Read in the level JSON file
-            string json = File.ReadAllText(path);
+            string json = File.ReadAllText(levelFilePath);
             var level = JsonConvert.DeserializeObject<LevelData>(json)!;
 
             // Loop through the level's map textures and load those in
@@ -63,10 +63,10 @@ namespace Gfx2d.Resources
         /// <summary>
         /// Serializes the JSON and saves the level data to the specified path.
         /// </summary>
-        public void Save(string path)
+        public void Save(string levelFilePath)
         {
             string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(path, json);
+            File.WriteAllText(levelFilePath, json);
         }
 
         /// <summary>

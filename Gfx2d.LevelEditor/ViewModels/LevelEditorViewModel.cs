@@ -647,12 +647,12 @@ namespace Gfx2d.LevelEditor.ViewModels
         }
 
         public ICommand AddTextureResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddTextureResourceReference);
-        private void AddTextureResourceReference(IEnumerable<string> paths)
+        private void AddTextureResourceReference(IEnumerable<string> textureFilePaths)
         {
             // First make sure all files are kosher
-            foreach (string path in paths)
-                if (!TextureData.ValidFile(path))
-                    throw new Exception($"The texture file {path} either does not exist, cannot be opened, or is an invalid texture data file.");
+            foreach (string textureFilePath in textureFilePaths)
+                if (!TextureData.ValidFile(textureFilePath))
+                    throw new Exception($"The texture file {textureFilePath} either does not exist, cannot be opened, or is an invalid texture data file.");
 
             // Determine max ResourceRefId being used in this level
             int currentRrId = 1;
@@ -660,22 +660,22 @@ namespace Gfx2d.LevelEditor.ViewModels
                 currentRrId = _model.MapTextures.Max(rr => rr.Id) + 1;
 
             // Now load them up!
-            foreach (string path in paths)
+            foreach (string textureFilePath in textureFilePaths)
             {
-                TextureData texture = TextureData.LoadFromFile(path);
+                TextureData texture = TextureData.LoadFromFile(textureFilePath);
 
                 // Create new ResourceReference
                 ResourceReference rr = new()
                 {
                     Id = currentRrId,
-                    FileName = System.IO.Path.GetFileName(path)
+                    FileName = System.IO.Path.GetFileName(textureFilePath)
                 };
 
                 _model.MapTextures.Add(rr);
 
                 _model.AddMapTexture(
                     rr.Id,
-                    System.IO.Path.GetFileName(rr.FileName),
+                    System.IO.Path.GetDirectoryName(textureFilePath)!,
                     texture
                 );
 
