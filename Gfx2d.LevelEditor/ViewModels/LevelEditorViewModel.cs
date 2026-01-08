@@ -33,7 +33,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                 _model.FloorColor[3]
             );
 
-            _resourceReferences = new ObservableCollection<ResourceReference>(_model.MapTextures);
+            _textureReferences = new ObservableCollection<TextureReference>(_model.TextureReferences);
 
             ConstructMapCellsCollection();            
         }
@@ -488,16 +488,16 @@ namespace Gfx2d.LevelEditor.ViewModels
 
         /// <summary>
         /// The status message to display in the map editor status bar.
-        /// Returns the currently selected resource reference, or a default message if none is selected.
+        /// Returns the currently selected texture reference, or a default message if none is selected.
         /// </summary>
         public string MapEditorStatusMessage
         {
             get
             {
-                if (this.SelectedResourceReference == null)
+                if (this.SelectedTextureReference == null)
                     return "No resource selected. Clicking a cell will set it to 'Floor' (0).";
                 else
-                    return $"Selected resource: '{this.SelectedResourceReference.FileName}' (ID: {this.SelectedResourceReference.Id})";
+                    return $"Selected resource: '{this.SelectedTextureReference.FileName}' (ID: {this.SelectedTextureReference.Id})";
             }
         }
 
@@ -510,8 +510,8 @@ namespace Gfx2d.LevelEditor.ViewModels
         {
             if (cell == null) return;
 
-            // If a resource reference is currently selected then use its Id, otherwise use 0 (Floor)
-            int newValue = SelectedResourceReference?.Id ?? 0;
+            // If a texture reference is currently selected then use its Id, otherwise use 0 (Floor)
+            int newValue = SelectedTextureReference?.Id ?? 0;
 
             if (cell.Value == newValue)
                 return;
@@ -521,7 +521,7 @@ namespace Gfx2d.LevelEditor.ViewModels
             _model.MapTiles[cell.Row][cell.Column] = newValue;
 
             // Get the resource data for the new value
-            Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
+            Dictionary<int, Texture> textureData = _model.GetTextureMap();
             ColorArgb newColor = textureData.ContainsKey(newValue)
                 ? textureData[newValue].GetRepresentativeColor() ?? ColorArgb.Black()
                 : ColorArgb.LightGray();
@@ -554,38 +554,38 @@ namespace Gfx2d.LevelEditor.ViewModels
         }
         #endregion
 
-        #region Resource References
-        private ObservableCollection<ResourceReference> _resourceReferences;
-        public ObservableCollection<ResourceReference> ResourceReferences
+        #region Texture References
+        private ObservableCollection<TextureReference> _textureReferences;
+        public ObservableCollection<TextureReference> TextureReferences
         {
-            get => _resourceReferences;
+            get => _textureReferences;
             private set
             {
-                _resourceReferences = value;
-                OnPropertyChanged(nameof(ResourceReferences));
+                _textureReferences = value;
+                OnPropertyChanged(nameof(TextureReferences));
             }
         }
 
 
-        private ResourceReference? _selectedResourceReference;
-        public ResourceReference? SelectedResourceReference
+        private TextureReference? _selectedTextureReference;
+        public TextureReference? SelectedTextureReference
         {
-            get => _selectedResourceReference;
+            get => _selectedTextureReference;
             set
             {
-                _selectedResourceReference = value;
-                OnPropertyChanged(nameof(SelectedResourceReference));
+                _selectedTextureReference = value;
+                OnPropertyChanged(nameof(SelectedTextureReference));
                 OnPropertyChanged(nameof(MapEditorStatusMessage));
             }
         }
 
-        public ICommand RemoveResourceCommand => new RelayCommand<ResourceReference>(RemoveResourceReference);
-        public void RemoveResourceReference(ResourceReference resourceRef)
+        public ICommand RemoveTextureCommand => new RelayCommand<TextureReference>(RemoveTextureReference);
+        public void RemoveTextureReference(TextureReference resourceRef)
         {
             if (resourceRef == null) return;
 
-            // See how many times the resource is used on the map
-            int rrCount = _model.GetResourceReferenceUsageCount(resourceRef.Id);
+            // See how many times the texture is used on the map
+            int rrCount = _model.GetTextureReferenceUsageCount(resourceRef.Id);
 
             if (rrCount > 0)
             {
@@ -600,37 +600,37 @@ namespace Gfx2d.LevelEditor.ViewModels
                     return;
             }
 
-            // Remove the ResourceReference from both the view model and underlying model
-            ResourceReferences.Remove(resourceRef);
-            _model.MapTextures = ResourceReferences.ToList();
+            // Remove the TextureReference from both the view model and underlying model
+            TextureReferences.Remove(resourceRef);
+            _model.TextureReferences = TextureReferences.ToList();
 
             // Remove all references to the resouce reference from the map, if any
             if (rrCount > 0)
-                _model.RemoveResourceReferenceFromMap(resourceRef.Id);
+                _model.RemoveTextureReferenceFromMap(resourceRef.Id);
 
             IsDirty = true;
         }
 
-        public ICommand UnselectResourceReferenceCommand => new RelayCommand<ResourceReference>(
-            UnselectResourceReference,
+        public ICommand UnselectTextureReferenceCommand => new RelayCommand<TextureReference>(
+            UnselectTextureReference,
             rr => rr != null
         );
-        private void UnselectResourceReference(ResourceReference currentlySelectedResourceRef)
+        private void UnselectTextureReference(TextureReference currentlySelectedResourceRef)
         {
-            SelectedResourceReference = null;
+            SelectedTextureReference = null;
         }
 
-        public ICommand FillEdgesWithSelectedResourceReferenceCommand => new RelayCommand<ResourceReference>(
-            FillEdgesWithSelectedResourceReference,
+        public ICommand FillEdgesWithSelectedTextureReferenceCommand => new RelayCommand<TextureReference>(
+            FillEdgesWithSelectedTextureReference,
             rr => rr != null
         );
-        private void FillEdgesWithSelectedResourceReference(ResourceReference currentlySelectedResourceRef)
+        private void FillEdgesWithSelectedTextureReference(TextureReference currentlySelectedResourceRef)
         {
             foreach (var cell in MapCells)
                 if (cell.Row == 0 || cell.Row == MapHeight - 1 || cell.Column == 0 || cell.Column == MapWidth - 1)
                 {
                     // Get the resource data for the new value
-                    Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
+                    Dictionary<int, Texture> textureData = _model.GetTextureMap();
                     ColorArgb newColor = textureData.ContainsKey(currentlySelectedResourceRef.Id)
                         ? textureData[currentlySelectedResourceRef.Id].GetRepresentativeColor() ?? ColorArgb.Black()
                         : ColorArgb.LightGray();
@@ -646,8 +646,8 @@ namespace Gfx2d.LevelEditor.ViewModels
             OnPropertyChanged(nameof(MapCells));
         }
 
-        public ICommand AddTextureResourceReferenceCommand => new RelayCommand<IEnumerable<string>>(AddTextureResourceReference);
-        private void AddTextureResourceReference(IEnumerable<string> textureFilePaths)
+        public ICommand AddTextureReferenceCommand => new RelayCommand<IEnumerable<string>>(AddTextureReference);
+        private void AddTextureReference(IEnumerable<string> textureFilePaths)
         {
             // First make sure all files are kosher
             foreach (string textureFilePath in textureFilePaths)
@@ -656,24 +656,24 @@ namespace Gfx2d.LevelEditor.ViewModels
 
             // Determine max ResourceRefId being used in this level
             int currentRrId = 1;
-            if (_model.MapTextures.Any())
-                currentRrId = _model.MapTextures.Max(rr => rr.Id) + 1;
+            if (_model.TextureReferences.Any())
+                currentRrId = _model.TextureReferences.Max(rr => rr.Id) + 1;
 
             // Now load them up!
             foreach (string textureFilePath in textureFilePaths)
             {
                 TextureData texture = TextureData.LoadFromFile(textureFilePath);
 
-                // Create new ResourceReference
-                ResourceReference rr = new()
+                // Create new TextureReference
+                TextureReference rr = new()
                 {
                     Id = currentRrId,
                     FileName = System.IO.Path.GetFileName(textureFilePath)
                 };
 
-                _model.MapTextures.Add(rr);
+                _model.TextureReferences.Add(rr);
 
-                _model.AddMapTexture(
+                _model.AddTexture(
                     rr.Id,
                     System.IO.Path.GetDirectoryName(textureFilePath)!,
                     texture
@@ -682,7 +682,7 @@ namespace Gfx2d.LevelEditor.ViewModels
                 currentRrId++;
             }
 
-            ResourceReferences = new ObservableCollection<ResourceReference>(_model.MapTextures);
+            TextureReferences = new ObservableCollection<TextureReference>(_model.TextureReferences);
         }
         #endregion
 
@@ -708,7 +708,7 @@ namespace Gfx2d.LevelEditor.ViewModels
         private void ConstructMapCellsCollection()
         {
             // Construct the MapCellViewModel collection from the underlying model's MapTiles
-            Dictionary<int, MapTexture> textureData = _model.GetMapTextures();
+            Dictionary<int, Texture> textureData = _model.GetTextureMap();
 
             _mapCells = new ObservableCollection<MapCellViewModel>();
             for (int row = 0; row < _model.MapTiles.Length; row++)

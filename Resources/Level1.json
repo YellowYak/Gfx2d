@@ -10,7 +10,7 @@
       "X": 5.6,
       "Y": 12.52
     },
-    "cameraAngleRads": 5.0
+    "cameraAngleRads": 4.74
   },
   "mapTiles": [
     [
@@ -110,7 +110,7 @@
       0,
       2,
       0,
-      2,
+      0,
       0,
       2,
       0,
@@ -196,7 +196,7 @@
       1
     ]
   ],
-  "mapTextures": [
+  "textureReferences": [
     {
       "id": 1,
       "fileName": "Textures/Sand.json"

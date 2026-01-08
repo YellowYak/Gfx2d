@@ -141,10 +141,10 @@ namespace Gfx2d.Engine
             {
                 for (int y = 0; y < map.Height; y++)
                 {
-                    MapTexture? mapTexture = map.GetMapTileTexture(x, y);
-                    ColorArgb c = mapTexture == null ?
+                    Texture? texture = map.GetMapTileTexture(x, y);
+                    ColorArgb c = texture == null ?
                         map.FloorColor : 
-                        mapTexture.GetRepresentativeColor() ?? ColorArgb.Black();
+                        texture.GetRepresentativeColor() ?? ColorArgb.Black();
 
                     state.FillRectangle(
                         x * pixelsPerTileX,
@@ -286,7 +286,7 @@ namespace Gfx2d.Engine
                     cameraAngleIndex = MathHelpers.PossibleRotationRadiansLength - cameraAngleIndex;
 
                 // Get the resource at the current tile. If this is null then the current tile is a floor, otherwise it's a wall.
-                MapTexture? currentTileTexture = map.GetMapTileTexture(raycast_ind_x, raycast_ind_y);
+                Texture? currentTileTexture = map.GetMapTileTexture(raycast_ind_x, raycast_ind_y);
 
                 // We also want to determine which direction we encountered the wall, as walls can have different displays for each wall face.
                 ResourceSide wallSideStruckByRay = ResourceSide.N;
@@ -485,8 +485,8 @@ namespace Gfx2d.Engine
                 double offsetOnWall = wallSideStruckByRay == ResourceSide.N || wallSideStruckByRay == ResourceSide.S ? raycast_offset_x : raycast_offset_y;
 
                 // Determine the corresponding X coordinate on the texture
-                int textureX = (int)(offsetOnWall / tileWidth * MapTexture.Width);
-                textureX = Math.Clamp(textureX, 0, MapTexture.Width - 1);
+                int textureX = (int)(offsetOnWall / tileWidth * Texture.Width);
+                textureX = Math.Clamp(textureX, 0, Texture.Width - 1);
 
                 // Get the column of colors on the texture for the textureX we're currently rendering
                 ColorArgb[] textureColumn = currentTileTexture.GetColorColumn(wallSideStruckByRay, textureX);
@@ -498,8 +498,8 @@ namespace Gfx2d.Engine
                     int pixelsFromTopOfWall = y - (screenHeight - wallUpperBoundUnclamped);
 
                     double textureYRatio = (double)pixelsFromTopOfWall / (double)fullWallHeight;
-                    int textureY = (int)(textureYRatio * MapTexture.Height);
-                    textureY = Math.Clamp(textureY, 0, MapTexture.Height - 1);
+                    int textureY = (int)(textureYRatio * Texture.Height);
+                    textureY = Math.Clamp(textureY, 0, Texture.Height - 1);
 
                     // Get the apporpriate color from the texture color column and apply shading
                     ColorArgb texelColor = textureColumn[textureY].ApplyShading(shading);

@@ -3,7 +3,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Gfx2d.Resources
 {
-    public class MapTexture
+    public class Texture
     {
         public const int Width = 64;
         public const int Height = 64;
@@ -18,7 +18,7 @@ namespace Gfx2d.Resources
         public ColorArgb[][] SouthBitmap;
         public ColorArgb[][] WestBitmap;
 
-        public MapTexture()
+        public Texture()
         {
             NorthBitmap = new ColorArgb[Width][];
             EastBitmap = new ColorArgb[Width][];
@@ -119,9 +119,9 @@ namespace Gfx2d.Resources
             }
         }
 
-        public static MapTexture Create(string folder, TextureData textureData)
+        public static Texture Create(string folder, TextureData textureData)
         {
-            MapTexture texture = new();
+            Texture texture = new();
 
             texture.Name = textureData.Name;
 

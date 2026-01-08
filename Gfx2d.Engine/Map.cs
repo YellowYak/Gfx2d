@@ -45,11 +45,11 @@ namespace Gfx2d.Engine
         /// Note that the coordinates here are relative to the 2d tile array.
         /// </summary>
         /// <returns>null if the tile resource is the floor, otherwise the wall's resource.</returns>
-        public MapTexture? GetMapTileTexture(int x_index, int y_index)
+        public Texture? GetMapTileTexture(int x_index, int y_index)
         {
             int resourceId = this.LevelData.MapTiles[y_index][x_index];
 
-            return resourceId == 0 ? null : this.LevelData.GetMapTextures()[resourceId];
+            return resourceId == 0 ? null : this.LevelData.GetTextureMap()[resourceId];
         }
 
         public ColorArgb CeilingColor => this.LevelData.GetCeilingColor();

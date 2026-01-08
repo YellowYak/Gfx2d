@@ -192,7 +192,7 @@ namespace Gfx2d.LevelEditor
             {
                 try
                 {
-                    ViewModel.AddTextureResourceReferenceCommand.Execute(dlg.FileNames);
+                    ViewModel.AddTextureReferenceCommand.Execute(dlg.FileNames);
                 }
                 catch (Exception ex)
                 {

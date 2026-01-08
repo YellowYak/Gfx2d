@@ -2,7 +2,7 @@
 
 namespace Gfx2d.Resources
 {
-    public class ResourceReference
+    public class TextureReference
     {
         [JsonProperty("id", Required = Required.Always)]
         public int Id { get; set; }

@@ -187,21 +187,21 @@
                                 FontSize="8"
                                 Margin="10,5"/>
                             <Button Content="Unselect"
-                                Command="{Binding UnselectResourceReferenceCommand}"
-                                CommandParameter="{Binding SelectedResourceReference}"
+                                Command="{Binding UnselectTextureReferenceCommand}"
+                                CommandParameter="{Binding SelectedTextureReference}"
                                 ToolTip="Unselects the map texture. Once unselected, drawing on the map will put place floors."
                                 FontSize="8"
                                 Margin="10,5"/>
                             <Button Content="Set Edges"
-                                Command="{Binding FillEdgesWithSelectedResourceReferenceCommand}"
-                                CommandParameter="{Binding SelectedResourceReference}"
+                                Command="{Binding FillEdgesWithSelectedTextureReferenceCommand}"
+                                CommandParameter="{Binding SelectedTextureReference}"
                                 ToolTip="Set each tile on the edge of the map with the selected texture."
                                 FontSize="8"
                                 Margin="10,5"/>
                         </StackPanel>
 
-                        <ListBox ItemsSource="{Binding ResourceReferences}"
-                             SelectedItem="{Binding SelectedResourceReference, Mode=TwoWay}"
+                        <ListBox ItemsSource="{Binding TextureReferences}"
+                             SelectedItem="{Binding SelectedTextureReference, Mode=TwoWay}"
                              BorderThickness="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -220,7 +220,7 @@
                                             Width="22"
                                             Height="22"
                                             Focusable="False"
-                                            Command="{Binding DataContext.RemoveResourceCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            Command="{Binding DataContext.RemoveTextureCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"/>
                                     </Grid>
                                 </DataTemplate>

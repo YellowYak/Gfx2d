@@ -38,16 +38,16 @@ namespace Gfx2d.Resources
             var level = JsonConvert.DeserializeObject<LevelData>(json)!;
 
             // Loop through the level's map textures and load those in
-            level.mapTextures.Clear();
-            foreach (ResourceReference rr in level.MapTextures)
+            level.textureMap.Clear();
+            foreach (TextureReference rr in level.TextureReferences)
             {
                 string fullPath = Path.Combine(folder, rr.FileName);
-                if (!File.Exists(fullPath)) throw new FileNotFoundException("Resource reference file not found.", fullPath);
+                if (!File.Exists(fullPath)) throw new FileNotFoundException("Texture reference file not found.", fullPath);
 
                 string resourceJson = File.ReadAllText(fullPath);
                 TextureData data = JsonConvert.DeserializeObject<TextureData>(resourceJson)!;
 
-                level.AddMapTexture(
+                level.AddTexture(
                     rr.Id,
                     System.IO.Path.GetDirectoryName(fullPath)!,
                     data
@@ -70,9 +70,9 @@ namespace Gfx2d.Resources
         }
 
         /// <summary>
-        /// Returns how many times a specific resource reference ID is used in the map.
+        /// Returns how many times a specific texture reference ID is used in the map.
         /// </summary>
-        public int GetResourceReferenceUsageCount(int resourceRefId)
+        public int GetTextureReferenceUsageCount(int resourceRefId)
         {
             int count = 0;
 
@@ -85,9 +85,9 @@ namespace Gfx2d.Resources
         }
 
         /// <summary>
-        /// Remove all references to a particular resource from the map tiles.
+        /// Remove all references to a particular texture from the map tiles.
         /// </summary>
-        public void RemoveResourceReferenceFromMap(int resourceRefId)
+        public void RemoveTextureReferenceFromMap(int resourceRefId)
         {
             for (int i = 0; i < MapTiles.Length; i++)
             {
@@ -101,20 +101,20 @@ namespace Gfx2d.Resources
             }
         }
 
-        private Dictionary<int, MapTexture> mapTextures = new();
-        public Dictionary<int, MapTexture> GetMapTextures() => this.mapTextures;
-        public void AddMapTexture(int resourceRefId, MapTexture mapTexture)
+        private Dictionary<int, Texture> textureMap = new();
+        public Dictionary<int, Texture> GetTextureMap() => this.textureMap;
+        public void AddTexture(int resourceRefId, Texture texture)
         {
-            mapTextures.Add(
+            textureMap.Add(
                 resourceRefId,
-                mapTexture
+                texture
             );
         }
-        public void AddMapTexture(int resourceRefId, string folder, TextureData resource)
+        public void AddTexture(int resourceRefId, string folder, TextureData resource)
         {
-            AddMapTexture(
+            AddTexture(
                 resourceRefId,
-                MapTexture.Create(folder, resource)
+                Texture.Create(folder, resource)
             );
         }
 
@@ -152,8 +152,8 @@ namespace Gfx2d.Resources
             new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         };
 
-        [JsonProperty("mapTextures", Required = Required.Always)]
-        public List<ResourceReference> MapTextures { get; set; } = new();
+        [JsonProperty("textureReferences", Required = Required.Always)]
+        public List<TextureReference> TextureReferences { get; set; } = new();
 
         [JsonProperty("ceilingColor", Required = Required.Always)]
         [JsonConverter(typeof(ByteArrayAsArrayConverter))]
